@@ -175,6 +175,7 @@
      <Compile Include="Assets\Scripts\UI\CustomButtons\CustomButton.cs" />
      <Compile Include="Assets\Scripts\UI\CustomButtons\ToggleButtonBase.cs" />
      <Compile Include="Assets\Scripts\UI\Manager\CanvasManagerMenu.cs" />
+     <Compile Include="Assets\Scripts\UI\Manager\GameSelectPanel.cs" />
      <Compile Include="Assets\Scripts\Utility\DebugFrameRate.cs" />
      <Compile Include="Assets\Scripts\Utility\ListUtility.cs" />
      <Compile Include="Assets\Scripts\Utility\MonoSingleton.cs" />

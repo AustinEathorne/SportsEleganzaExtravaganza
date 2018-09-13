@@ -36,6 +36,8 @@ public class BreathingImageButton : CustomButton
     public float exitReleasedScaleTime;
     public float exitReleasedShiftTime;
 
+    public bool isReusable;
+
     #region Base
 
     protected override IEnumerator Start()
@@ -155,7 +157,16 @@ public class BreathingImageButton : CustomButton
 
         this.onClick.Invoke();
 
-        this.buttonState = ButtonState.OFF;
+        if (this.isReusable)
+        {
+            this.buttonState = ButtonState.IDLE;
+            this.StartCoroutine(this.Run());
+        }
+        else
+        {
+            this.buttonState = ButtonState.OFF;
+        }
+
         this.routineLock = false;
 
         yield return null;

@@ -17,6 +17,14 @@ public class BreathingImageButtonEditor : Editor
     private bool showExit = true;
     private bool showOnClick = true;
 
+    SerializedProperty isReusable;
+
+
+    protected virtual void OnEnable()
+    {
+        this.isReusable = this.serializedObject.FindProperty("isReusable");
+    }
+
     public override void OnInspectorGUI()
     {
         EditorGUI.indentLevel = 1;
@@ -102,6 +110,12 @@ public class BreathingImageButtonEditor : Editor
 
         if (this.showOff)
         {
+            Rect rOffA1 = EditorGUILayout.BeginVertical(boxStyle);
+
+            EditorGUILayout.PropertyField(this.isReusable, new GUIContent("Is Reusable"));
+
+            EditorGUILayout.EndVertical();
+
             Rect rOffA = EditorGUILayout.BeginVertical(boxStyle);
 
             myTarget.pressedScaleAwayTime = EditorGUILayout.FloatField("Scale Down Time", myTarget.pressedScaleAwayTime);

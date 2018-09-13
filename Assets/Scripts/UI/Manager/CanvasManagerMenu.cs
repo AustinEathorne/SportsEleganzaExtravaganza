@@ -6,7 +6,10 @@ using UnityEngine.UI;
 
 public class CanvasManagerMenu : MonoBehaviour
 {
-    
+    [Header("Game Select")]
+    [SerializeField]
+    private GameSelectPanel gameSelectPanel;
+
     [Header("Containers")]
     [SerializeField]
     private MenuStateGameObjectDictionary containerDictionary;
@@ -53,15 +56,41 @@ public class CanvasManagerMenu : MonoBehaviour
         // Set our current state
         this.currentState = _state;
 
-        UIUtility.Instance.StopAllCoroutines();
+        switch (_state)
+        {
+            case MenuState.Start:
+                // Turn off previous
+                yield return this.StartCoroutine(this.TogglePanelButtons(this.previousState, false));
 
-        // Turn off previous
-        yield return this.StartCoroutine(this.TogglePanelButtons(this.previousState, false));
-        yield return this.StartCoroutine(this.ToggleContainer(this.previousState, false));
+                // Turn on current
+                yield return this.StartCoroutine(this.TogglePanelButtons(this.currentState, true));
+                break;
 
-        // Turn on current
-        yield return this.StartCoroutine(this.ToggleContainer(this.currentState, true));
-        yield return this.StartCoroutine(this.TogglePanelButtons(this.currentState, true));
+            case MenuState.MainMenu:
+                // Turn off previous
+                yield return this.StartCoroutine(this.TogglePanelButtons(this.previousState, false));
+                if (this.previousState == MenuState.GameSelect)
+                {
+                    yield return this.gameSelectPanel.StartCoroutine(this.gameSelectPanel.TogglePanel(false));
+                }
+
+                // Turn on current
+                yield return this.StartCoroutine(this.TogglePanelButtons(this.currentState, true));
+                break;
+
+            case MenuState.GameSelect:
+                // Turn off previous
+                yield return this.StartCoroutine(this.TogglePanelButtons(this.previousState, false));
+
+                // Turn on current
+                yield return this.StartCoroutine(this.ToggleContainer(this.currentState, true));
+                yield return this.gameSelectPanel.StartCoroutine(this.gameSelectPanel.TogglePanel(true));
+                yield return this.StartCoroutine(this.TogglePanelButtons(this.currentState, true));
+                break;
+
+            default:
+                break;
+        }
 
         // Set our previous state for the next state change
         this.previousState = this.currentState;
@@ -71,7 +100,6 @@ public class CanvasManagerMenu : MonoBehaviour
 
         yield return null;
     }
-
 
     public IEnumerator TogglePanelButtons(MenuState _state, bool _isActive)
     {
@@ -91,12 +119,7 @@ public class CanvasManagerMenu : MonoBehaviour
 
     public IEnumerator ToggleContainer(MenuState _state, bool _isActive)
     {
-        // These don't need to be turned off TODO: rethink this setup
-        if (_state == MenuState.Start || _state == MenuState.MainMenu)
-            yield break;
-
         this.containerDictionary[_state].SetActive(_isActive);
-
         yield return null;
     }
 }
