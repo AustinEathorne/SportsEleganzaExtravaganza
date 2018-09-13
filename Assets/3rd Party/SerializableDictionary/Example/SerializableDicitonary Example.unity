@@ -145,40 +145,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_stringStringDictionary:
-    m_keys:
-    - first key
-    - second key
-    - third key
-    m_values:
-    - value A
-    - value B
-    - value C
+    m_keys: []
+    m_values: []
   m_objectColorDictionary:
-    m_keys:
-    - {fileID: 714127983}
-    - {fileID: 714127984}
-    m_values:
-    - {r: 0, g: 0, b: 1, a: 1}
-    - {r: 1, g: 0, b: 0, a: 1}
+    m_keys: []
+    m_values: []
   m_objectColorArrayDictionary:
-    m_keys:
-    - rainbow
-    - grayscale
-    m_values:
-    - data:
-      - {r: 1, g: 0, b: 0, a: 1}
-      - {r: 1, g: 0.40000004, b: 0, a: 1}
-      - {r: 1, g: 0.9333334, b: 0, a: 1}
-      - {r: 0, g: 1, b: 0, a: 1}
-      - {r: 0, g: 0.6, b: 1, a: 1}
-      - {r: 0.26666668, g: 0, b: 1, a: 1}
-      - {r: 0.6, g: 0, b: 1, a: 1}
-    - data:
-      - {r: 0, g: 0, b: 0, a: 0}
-      - {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 0.2509804}
-      - {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 0.5019608}
-      - {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 0.7529412}
-      - {r: 1, g: 1, b: 1, a: 1}
+    m_keys: []
+    m_values: []
 --- !u!81 &714127985
 AudioListener:
   m_ObjectHideFlags: 0
