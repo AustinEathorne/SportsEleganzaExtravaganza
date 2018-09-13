@@ -24,19 +24,15 @@ public class BreathingTextButton : CustomButton
     public float onScaleTime;
     public float onFadeTime;
     [Header("Turning Off")]
-    public float offScaleTime;
     public float offFadeTime;
     [Header("Idle")]
     public float idleScaleDownTime;
     public float idleScaleUpTime;
-    public float idleColourShiftTime;
     [Header("Pressed/Released")]
-    public float pressedScaleTime;
     public float pressedColourShiftTime;
     [Header("Exit")]
-    public float exitScaleTime;
     public float exitColourShiftTime;
-
+    
     // Routines
     protected IEnumerator fadeListRoutine;
     protected IEnumerator scaleListRoutine;
@@ -93,12 +89,11 @@ public class BreathingTextButton : CustomButton
 
     protected override IEnumerator TurnOff()
     {
-        // Start and yield fade/scale routines
+        // Start and yield fade routine
         this.fadeListRoutine = UIUtility.Instance.FadeListOverTime(this.textList, this.offFadeTime, 0.0f, true);
-        UIUtility.Instance.StartCoroutine(this.fadeListRoutine);
+        yield return UIUtility.Instance.StartCoroutine(this.fadeListRoutine);
 
-        this.scaleListRoutine = UIUtility.Instance.ScaleListOverTime(this.textTransformList, 0.0f, this.offScaleTime, true, true);
-        yield return UIUtility.Instance.StartCoroutine(this.scaleListRoutine);
+        this.stateRoutineDictionary[ButtonState.TurningOff] = null;
     }
 
     protected override IEnumerator Idle()
@@ -122,39 +117,31 @@ public class BreathingTextButton : CustomButton
 
     protected override IEnumerator Pressed()
     {
-        // Scale to min scale
-        this.scaleListRoutine = UIUtility.Instance.ScaleListOverTime(this.textTransformList, this.minScale,
-            this.pressedScaleTime, true, true);
-        UIUtility.Instance.StartCoroutine(this.scaleListRoutine);
-
-        // Yield shift to pressed colours
+        // Shift to pressed colours
         this.shiftColourListRoutine = UIUtility.Instance.ShiftListColours(this.textList, this.pressedColours,
             this.pressedColourShiftTime, true);
-        yield return UIUtility.Instance.StartCoroutine(this.shiftColourListRoutine);
+        UIUtility.Instance.StartCoroutine(this.shiftColourListRoutine);
+
+        yield return null;
     }
 
     protected override IEnumerator Released()
     {
-        // yield shift to pressed colours
-        this.shiftColourListRoutine = UIUtility.Instance.ShiftListColours(this.textList, this.pressedColours,
-            this.pressedColourShiftTime, true);
-        yield return UIUtility.Instance.StartCoroutine(this.shiftColourListRoutine);
-
         // Invoke onClick event
         this.onClick.Invoke();
+
+        yield return null;
     }
 
     protected override IEnumerator Exit()
     {
         // Shift to idle colours
-        this.shiftColourListRoutine = UIUtility.Instance.ShiftListColours(this.textList, this.idleColours, this.idleColourShiftTime, true);
+        this.shiftColourListRoutine = UIUtility.Instance.ShiftListColours(this.textList, this.idleColours, this.exitColourShiftTime, true);
         UIUtility.Instance.StartCoroutine(this.shiftColourListRoutine);
-
-        // Yield scale to 1
-        UIUtility.Instance.ScaleListOverTime(this.textTransformList, 1.0f, this.exitScaleTime, true, true);
-        yield return UIUtility.Instance.StartCoroutine(this.scaleListRoutine);
 
         // Start Idle
         this.StartCoroutine(this.AttemptStateChange(ButtonState.Idle));
+
+        yield return null;
     }
 }

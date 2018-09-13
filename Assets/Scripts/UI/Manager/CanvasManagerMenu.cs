@@ -36,7 +36,6 @@ public class CanvasManagerMenu : MonoBehaviour
 
     public void OnStateChangeClick(int _state)
     {
-        Debug.Log("[CanvasManager] State Change OnClick");
         this.StartCoroutine(this.StartMenuStateChange((MenuState)_state));
     }
 
@@ -54,17 +53,15 @@ public class CanvasManagerMenu : MonoBehaviour
         // Set our current state
         this.currentState = _state;
 
+        UIUtility.Instance.StopAllCoroutines();
+
         // Turn off previous
         yield return this.StartCoroutine(this.TogglePanelButtons(this.previousState, false));
         yield return this.StartCoroutine(this.ToggleContainer(this.previousState, false));
 
-        Debug.Log("[CanvasManager] Finished turning off previous panel");
-
         // Turn on current
         yield return this.StartCoroutine(this.ToggleContainer(this.currentState, true));
         yield return this.StartCoroutine(this.TogglePanelButtons(this.currentState, true));
-
-        Debug.Log("[CanvasManager] Finished turning on current panel");
 
         // Set our previous state for the next state change
         this.previousState = this.currentState;
@@ -81,10 +78,14 @@ public class CanvasManagerMenu : MonoBehaviour
         for (int i = 0; i < this.buttonDictionary[_state].Count; i++)
         {
             // Yield last element
-            if(i != (this.buttonDictionary[_state].Count - 1))
+            if (i != (this.buttonDictionary[_state].Count - 1))
+            {
                 this.buttonDictionary[_state][i].StartCoroutine(this.buttonDictionary[_state][i].Enable(_isActive));
+            }
             else
+            {
                 yield return this.buttonDictionary[_state][i].StartCoroutine(this.buttonDictionary[_state][i].Enable(_isActive));
+            }
         }
 
         yield return null;

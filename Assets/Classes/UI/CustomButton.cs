@@ -40,16 +40,14 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
             yield return this.StartCoroutine(this.AttemptStateChange(ButtonState.TurningOn));
 
             // Wait for state change to be finished
-            yield return new WaitUntil(() => stateRoutineDictionary[ButtonState.TurningOn] ==  null);
-            Debug.Log("[CustomButton] Finished turning on");
+            yield return new WaitUntil(() => this.stateRoutineDictionary[ButtonState.TurningOn] ==  null);
         }
         else
         {
             yield return this.StartCoroutine(this.AttemptStateChange(ButtonState.TurningOff));
 
             // Wait for state change to be finished
-            yield return new WaitUntil(() => stateRoutineDictionary[ButtonState.TurningOff] == null);
-            Debug.Log("[CustomButton] Finished turning off");
+            yield return new WaitUntil(() => this.stateRoutineDictionary[ButtonState.TurningOff] == null);
         }
 
         yield return null;
@@ -74,8 +72,6 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
     protected virtual IEnumerator AttemptStateChange(ButtonState _state)
     {
         yield return new WaitUntil(() => this.stateChangeRoutine == null);
-
-        Debug.Log("[CustomButton] Changing to " + _state.ToString());
 
         this.stateChangeRoutine = this.ChangeStates(_state);
         yield return this.StartCoroutine(this.stateChangeRoutine);
@@ -139,15 +135,12 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
         // Update previous state
         this.previousState = _state;
 
-        Debug.Log("[CustomButton] Finished changing to " + _state.ToString());
-
         yield return null;
     }
 
 
     public virtual void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("[CustomButton] OnPointerDown");
         this.StartCoroutine(this.AttemptStateChange(ButtonState.Pressed));
     }
 
@@ -155,7 +148,6 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
     {
         if (this.currentState == ButtonState.Pressed)
         {
-            Debug.Log("[CustomButton] OnPointerUp");
             this.StartCoroutine(this.AttemptStateChange(ButtonState.Released));
         }
     }
@@ -164,7 +156,6 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
     {
         if (this.currentState == ButtonState.Pressed)
         {
-            Debug.Log("[CustomButton] OnPointerExit");
             this.StartCoroutine(this.AttemptStateChange(ButtonState.Exit));
         }
     }

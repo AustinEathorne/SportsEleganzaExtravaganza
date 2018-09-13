@@ -170,7 +170,7 @@ public class UIUtility : MonoSingleton<UIUtility>
             }
 
             if (_rTransform)
-                _rTransform.localScale = new Vector3(currentScale, currentScale, 1.0f);
+                _rTransform.localScale = new Vector3(_targetScale, _targetScale, 1.0f);
         }
         else
         {
