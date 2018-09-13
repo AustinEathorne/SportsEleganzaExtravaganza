@@ -617,11 +617,34 @@ public class UIUtility : MonoSingleton<UIUtility>
 		yield return null;
 	}
 
+    public IEnumerator ShiftListColours(List<Image> _images, float _shiftTime, List<Color> _targetColours, bool _isSimultaneous)
+    {
+        for (int i = 0; i < _images.Count; i++)
+        {
+            if (_isSimultaneous)
+            {
+                if (i < _images.Count - 1)
+                {
+                    this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i]));
+                }
+                else
+                {
+                    yield return this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i]));
+                }
+            }
+            else
+            {
+                this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i]));
+            }
+        }
+        yield return null;
+    }
+
     #endregion
 
     // TODO: test
     #region Containers (Buttons, etc)
-        
+
     /// <summary>
     /// Fade all text & image components found within a container
     /// </summary>

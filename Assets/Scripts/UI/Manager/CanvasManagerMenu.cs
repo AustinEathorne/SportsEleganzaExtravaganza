@@ -75,17 +75,15 @@ public class CanvasManagerMenu : MonoBehaviour
 
     public IEnumerator TogglePanelButtons(MenuState _state, bool _isActive)
     {
+        if (!this.buttonDictionary.ContainsKey(_state))
+            yield break;
+
         for (int i = 0; i < this.buttonDictionary[_state].Count; i++)
         {
-            // Yield last element
-            if (i != (this.buttonDictionary[_state].Count - 1))
-            {
-                this.buttonDictionary[_state][i].StartCoroutine(this.buttonDictionary[_state][i].Enable(_isActive));
-            }
+            if(_isActive)
+                this.buttonDictionary[_state][i].CallTurnOn();
             else
-            {
-                yield return this.buttonDictionary[_state][i].StartCoroutine(this.buttonDictionary[_state][i].Enable(_isActive));
-            }
+                this.buttonDictionary[_state][i].CallTurnOff();
         }
 
         yield return null;
@@ -93,7 +91,12 @@ public class CanvasManagerMenu : MonoBehaviour
 
     public IEnumerator ToggleContainer(MenuState _state, bool _isActive)
     {
+        // These don't need to be turned off TODO: rethink this setup
+        if (_state == MenuState.Start || _state == MenuState.MainMenu)
+            yield break;
+
         this.containerDictionary[_state].SetActive(_isActive);
+
         yield return null;
     }
 }
