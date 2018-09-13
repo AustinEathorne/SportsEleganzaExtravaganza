@@ -104,7 +104,6 @@
      <Compile Include="Assets\3rd Party\PostProcessing\Editor\Utils\ReflectionUtils.cs" />
      <Compile Include="Assets\3rd Party\SerializableDictionary\Editor\SerializableDictionaryPropertyDrawer.cs" />
      <Compile Include="Assets\3rd Party\SerializableDictionary\Example\Editor\UserSerializableDictionaryPropertyDrawers.cs" />
-     <Compile Include="Assets\Editor\UI\BreathingTextButtonEditor.cs" />
      <Compile Include="Assets\Editor\Utility\EditorList.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>D:/Projects/Personal/SportsEleganzaExtravaganza/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>

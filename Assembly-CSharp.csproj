@@ -169,10 +169,9 @@
      <Compile Include="Assets\3rd Party\SerializableDictionary\Example\SerializableDictionaryExample.cs" />
      <Compile Include="Assets\3rd Party\SerializableDictionary\Example\UserSerializableDictionaries.cs" />
      <Compile Include="Assets\3rd Party\SerializableDictionary\SerializableDictionary.cs" />
-     <Compile Include="Assets\Classes\Json\Base\JsonFile.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\BreathingTextButton.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\CustomTextButton.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\ToggleButtonBase.cs" />
+     <Compile Include="Assets\Classes\Json\JsonFile.cs" />
+     <Compile Include="Assets\Classes\UI\CustomButton.cs" />
+     <Compile Include="Assets\Scripts\UI\Buttons\BreathingTextButton.cs" />
      <Compile Include="Assets\Scripts\UI\Manager\CanvasManagerMenu.cs" />
      <Compile Include="Assets\Scripts\Utility\DebugFrameRate.cs" />
      <Compile Include="Assets\Scripts\Utility\ListUtility.cs" />

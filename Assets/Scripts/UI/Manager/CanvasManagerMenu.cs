@@ -6,49 +6,108 @@ using UnityEngine.UI;
 
 public class CanvasManagerMenu : MonoBehaviour
 {
+    
+    [Header("Containers")]
+    [SerializeField]
+    private MenuStateGameObjectDictionary containerDictionary;
+    
     [Header("Buttons")]
     [SerializeField]
     private MenuStateButtonListDictionary buttonDictionary;
 
     [Header("Debug")]
     [SerializeField]
+    private MenuState previousState;
+    [SerializeField]
     private MenuState currentState;
+
+    // Routines
+    private IEnumerator stateChangeRoutine;
 
 
 
     public IEnumerator Start()
     {
-        yield return this.StartCoroutine(this.TurnOnPanelButtons());
+        this.stateChangeRoutine = null;
+        yield return this.StartCoroutine(this.ToggleContainer(MenuState.Start, true));
+        yield return this.StartCoroutine(this.TogglePanelButtons(MenuState.Start, true));
     }
 
 
-    public IEnumerator TurnOnPanelButtons()
+    public void OnStateChangeClick(int _state)
     {
-        foreach (CustomTextButton button in this.buttonDictionary[this.currentState])
-        {
-            button.TurnOn();
-        }
+        Debug.Log("[CanvasManager] State Change OnClick");
+        this.StartCoroutine(this.StartMenuStateChange((MenuState)_state));
+    }
+
+    public IEnumerator StartMenuStateChange(MenuState _state)
+    {
+        // Wait if we're curerntly changing states
+        yield return new WaitUntil(() => this.stateChangeRoutine == null);
+
+        this.stateChangeRoutine = this.ChangeMenuState(_state);
+        this.StartCoroutine(this.stateChangeRoutine);
+    }
+
+    public IEnumerator ChangeMenuState(MenuState _state)
+    {
+        // Set our current state
+        this.currentState = _state;
+
+        // Turn off previous
+        yield return this.StartCoroutine(this.TogglePanelButtons(this.previousState, false));
+        yield return this.StartCoroutine(this.ToggleContainer(this.previousState, false));
+
+        Debug.Log("[CanvasManager] Finished turning off previous panel");
+
+        // Turn on current
+        yield return this.StartCoroutine(this.ToggleContainer(this.currentState, true));
+        yield return this.StartCoroutine(this.TogglePanelButtons(this.currentState, true));
+
+        Debug.Log("[CanvasManager] Finished turning on current panel");
+
+        // Set our previous state for the next state change
+        this.previousState = this.currentState;
+
+        // Set routine to null
+        this.stateChangeRoutine = null;
 
         yield return null;
     }
 
 
-
-    public void ChangeMenuState(MenuState _state)
+    public IEnumerator TogglePanelButtons(MenuState _state, bool _isActive)
     {
-        this.currentState = _state;
+        for (int i = 0; i < this.buttonDictionary[_state].Count; i++)
+        {
+            // Yield last element
+            if(i != (this.buttonDictionary[_state].Count - 1))
+                this.buttonDictionary[_state][i].StartCoroutine(this.buttonDictionary[_state][i].Enable(_isActive));
+            else
+                yield return this.buttonDictionary[_state][i].StartCoroutine(this.buttonDictionary[_state][i].Enable(_isActive));
+        }
+
+        yield return null;
     }
 
-
+    public IEnumerator ToggleContainer(MenuState _state, bool _isActive)
+    {
+        this.containerDictionary[_state].SetActive(_isActive);
+        yield return null;
+    }
 }
 
 public enum MenuState
 {
-    Start, MainMenu, GameSelect
+    Start = 0, MainMenu, GameSelect
 }
 
-[Serializable]
-public class MenuStateButtonListStorage : SerializableDictionary.Storage<List<CustomTextButton>> { }
 
 [Serializable]
-public class MenuStateButtonListDictionary : SerializableDictionary<MenuState, List<CustomTextButton>, MenuStateButtonListStorage> { }
+public class MenuStateButtonListStorage : SerializableDictionary.Storage<List<CustomButton>> { }
+
+[Serializable]
+public class MenuStateButtonListDictionary : SerializableDictionary<MenuState, List<CustomButton>, MenuStateButtonListStorage> { }
+
+[Serializable]
+public class MenuStateGameObjectDictionary : SerializableDictionary<MenuState, GameObject> { }

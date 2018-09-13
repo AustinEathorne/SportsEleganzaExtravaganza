@@ -7,6 +7,7 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(ObjectColorDictionary))]
 [CustomPropertyDrawer(typeof(StringColorArrayDictionary))]
 [CustomPropertyDrawer(typeof(MenuStateButtonListDictionary))]
+[CustomPropertyDrawer(typeof(MenuStateGameObjectDictionary))]
 public class AnySerializableDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer {}
 
 [CustomPropertyDrawer(typeof(MenuStateButtonListStorage))]
