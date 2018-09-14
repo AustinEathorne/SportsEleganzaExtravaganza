@@ -154,4 +154,10 @@ public class GameSelectPanel : MenuPanel
 
         yield return null;
     }
+
+
+    public void OnPlayGameClick()
+    {
+        CanvasManagerMenu.Instance.StartCoroutine(CanvasManagerMenu.Instance.OnGameSelect(this.currentPreviewIndex));
+    }
 }

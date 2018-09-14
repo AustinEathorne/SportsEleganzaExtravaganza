@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class CanvasManagerMenu : MonoBehaviour
+public class CanvasManagerMenu : MonoSingleton<CanvasManagerMenu>
 {    
     [Header("Buttons")]
     [SerializeField]
@@ -61,6 +62,14 @@ public class CanvasManagerMenu : MonoBehaviour
 
         // Set routine to null
         this.stateChangeRoutine = null;
+
+        yield return null;
+    }
+
+
+    public IEnumerator OnGameSelect(int _index)
+    {
+        SceneManager.LoadScene((_index + 1)); // Menu scene is 0
 
         yield return null;
     }

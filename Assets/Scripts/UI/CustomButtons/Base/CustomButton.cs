@@ -36,7 +36,6 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
 
     protected virtual IEnumerator Start()
     {
-        //this.StartCoroutine(this.TurnOn());
         yield return null;
     }
 
@@ -68,6 +67,7 @@ public abstract class CustomButton : MonoBehaviour, IPointerDownHandler, IPointe
 
         yield return null;
     }
+
 
     protected virtual IEnumerator TurnOn()
     {
