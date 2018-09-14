@@ -77,7 +77,7 @@ public class GameSelectPanel : MonoBehaviour
     {
         // Fade out preview
         UIUtility.Instance.StartCoroutine(
-           UIUtility.Instance.FadeOverTime(this.previewCanvasGroupList[this.currentPreviewIndex], this.previewFadeTime, 1));
+           UIUtility.Instance.FadeOverTime(this.previewCanvasGroupList[this.currentPreviewIndex], this.previewFadeTime, 0));
 
         yield return new WaitForSeconds(this.fadeDelay);
 
