@@ -194,9 +194,9 @@ MonoBehaviour:
 
     SPORTS
 
-    FEDEATION
+    FEDERATION
 
-    PRESENTS:'
+    PRESENTS'
 --- !u!222 &77679540
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1782,9 +1782,9 @@ MonoBehaviour:
 
     SPORTS
 
-    FEDEATION
+    FEDERATION
 
-    PRESENTS:'
+    PRESENTS'
 --- !u!222 &615692874
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3580,9 +3580,9 @@ MonoBehaviour:
 
     SPORTS
 
-    FEDEATION
+    FEDERATION
 
-    PRESENTS:'
+    PRESENTS'
 --- !u!222 &1183319012
 CanvasRenderer:
   m_ObjectHideFlags: 0
