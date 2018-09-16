@@ -22,12 +22,17 @@ public class UIUtility : MonoSingleton<UIUtility>
 
         while (elapsedTime < _travelTime)
 		{
+            if (_rTransform == null)
+                yield break;
+
             _rTransform.anchoredPosition = Vector3.Lerp(startPosition, _target, (elapsedTime / _travelTime));
             elapsedTime += Time.deltaTime;
 			yield return null;
 		}
 
-        _rTransform.anchoredPosition = _target;
+        if(_rTransform != null)
+            _rTransform.anchoredPosition = _target;
+
         yield return null;
     }
 
@@ -196,6 +201,7 @@ public class UIUtility : MonoSingleton<UIUtility>
         yield return null;
     }
 
+    /*
     public IEnumerator ScaleListOverTime(List<RectTransform> _rTransforms, float _targetScale, float _scaleTime, bool _isSmoothStep, bool _isSimultaneous)
     {
         if (_isSimultaneous)
@@ -209,6 +215,76 @@ public class UIUtility : MonoSingleton<UIUtility>
                 else
                 {
                     yield return this.StartCoroutine(this.ScaleOverTime(_rTransforms[i], _targetScale, _scaleTime, _isSmoothStep));
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _rTransforms.Count; i++)
+            {
+                yield return this.StartCoroutine(this.ScaleOverTime(_rTransforms[i], _targetScale, _scaleTime, _isSmoothStep));
+            }
+        }
+
+        yield return null;
+    }
+    */
+
+    public IEnumerator ScaleListOverTime(List<RectTransform> _rTransforms, float _targetScale, float _scaleTime, bool _isSmoothStep, bool _isSimultaneous)
+    {
+        if (_isSimultaneous)
+        {
+            float elapsedTime = 0.0f;
+
+            if (_isSmoothStep)
+            {
+                float startScale = _rTransforms[0].localScale.x;
+                float currentScale = 0.0f;
+
+                while (elapsedTime < _scaleTime)
+                {
+                    for (int i = 0; i < _rTransforms.Count; i++)
+                    {
+                        currentScale = Mathf.SmoothStep(startScale, _targetScale, (elapsedTime / _scaleTime));
+
+                        if (_rTransforms[i])
+                            _rTransforms[i].localScale = new Vector3(currentScale, currentScale, 1.0f);
+
+                    }
+
+                    elapsedTime += Time.deltaTime;
+
+                    yield return null;
+                }
+
+                for (int i = 0; i < _rTransforms.Count; i++)
+                {
+                    if (_rTransforms[i])
+                        _rTransforms[i].localScale = new Vector3(_targetScale, _targetScale, 1.0f);
+                }
+            }
+            else
+            {
+                Vector3 startScale = _rTransforms[0].localScale;
+                Vector3 targetScale = new Vector3(_targetScale, _targetScale, 1.0f);
+
+                while (elapsedTime < _scaleTime)
+                {
+                    for (int i = 0; i < _rTransforms.Count; i++)
+                    {
+                        if (_rTransforms[i])
+                            _rTransforms[i].localScale = Vector3.Lerp(startScale, targetScale, (elapsedTime / _scaleTime));
+                    }
+
+                    elapsedTime += Time.deltaTime;
+
+                    yield return null;
+                }
+
+                for (int i = 0; i < _rTransforms.Count; i++)
+                {
+                    if (_rTransforms[i])
+                        _rTransforms[i].localScale = targetScale;
                 }
             }
         }
@@ -378,12 +454,15 @@ public class UIUtility : MonoSingleton<UIUtility>
             startCol = new Color(startCol.r, startCol.g, startCol.b, _text.color.a);
             _targetColour = new Color(_targetColour.r, _targetColour.g, _targetColour.b, _text.color.a);
 
-            _text.color = Color.Lerp(startCol, _targetColour, elapsedTime / _shiftTime);
+            if(_text)
+                _text.color = Color.Lerp(startCol, _targetColour, elapsedTime / _shiftTime);
+
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
 
-        _text.color = _targetColour;
+        if (_text)
+            _text.color = _targetColour;
         yield return null;
 	}
 
