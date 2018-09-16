@@ -12,28 +12,43 @@ public class GameSelectPanel : MenuPanel
     [SerializeField]
     protected List<CanvasGroup> bgCanvasGroupList;
 
-    [Header("Text Groups")]
+    [Header("Title Container")]
     [SerializeField]
-    protected float textFadeTime;
+    protected float titleGroupFadeTime;
     [SerializeField]
-    protected List<CanvasGroup> textCanvasGroupList;
-
-    [Header("Buttons")]
-    public CanvasEffect playButtonEffect;
+    protected CanvasGroup titleCanvasGroup;
     public CanvasEffect backButtonEffect;
-    public List<CanvasEffect> gameSelectionButtonEffects;
 
-    [Header("Values")]
+    [Header("Play Button")]
     [SerializeField]
-    protected float fadeDelay;
+    private float playButtonFadeTime;
+    [SerializeField]
+    private CanvasGroup playButtonCanvasGroup;
+    [SerializeField]
+    private CanvasEffect playButtonEffect;
 
-    [Header("GamePreviewPanels")]
+
+    [Header("Preview Swap Buttons")]
+    [SerializeField]
+    private float swapButtonFadeTime;
+    [SerializeField]
+    private CanvasGroup swapButtonCanvasGroup;
+    [SerializeField]
+    private List<CanvasEffect> previewSwapButtonEffects;
+
+    [Header("Game Preview Panels")]
     [SerializeField]
     private float previewFadeTime;
     [SerializeField]
     private List<CanvasGroup> previewCanvasGroupList;
     [SerializeField]
     private List<VideoPlayer> videoPlayerList;
+
+    [Header("Misc Values")]
+    [SerializeField]
+    protected float fadeDelay;
+
+    [Header("Debug")]
     [SerializeField]
     private int currentPreviewIndex;
 
@@ -44,6 +59,8 @@ public class GameSelectPanel : MenuPanel
     protected override IEnumerator OpenPanel()
     {
         this.currentPreviewIndex = 0;
+        this.playButtonCanvasGroup.alpha = 0;
+        this.swapButtonCanvasGroup.alpha = 0;
 
         // Fade in bg groups
         UIUtility.Instance.StartCoroutine(
@@ -53,7 +70,7 @@ public class GameSelectPanel : MenuPanel
 
         // Fade in text groups
         UIUtility.Instance.StartCoroutine(
-            UIUtility.Instance.FadeListOverTime(this.textCanvasGroupList, this.textFadeTime, 1, true));
+            UIUtility.Instance.FadeOverTime(this.titleCanvasGroup, this.titleGroupFadeTime, 1));
 
         yield return new WaitForSeconds(this.fadeDelay);
 
@@ -63,18 +80,24 @@ public class GameSelectPanel : MenuPanel
         // Start playing the first preview's video
         this.videoPlayerList[this.currentPreviewIndex].Play();
 
-        // Turn on game selection button effects
-        foreach (CanvasEffect effect in this.gameSelectionButtonEffects)
+        // Turn on preview swap button effects
+        foreach (CanvasEffect effect in this.previewSwapButtonEffects)
         {
             effect.TurnOn();
         }
+
+        // Fade in preview swap canvas group
+        UIUtility.Instance.StartCoroutine(
+           UIUtility.Instance.FadeOverTime(this.swapButtonCanvasGroup, this.swapButtonFadeTime, 1));
 
         // Yield preview fade in
         yield return UIUtility.Instance.StartCoroutine(
            UIUtility.Instance.FadeOverTime(this.previewCanvasGroupList[this.currentPreviewIndex], this.previewFadeTime, 1));
 
-        // Turn on play button effect
+        // Turn on play button effect and fade in
         this.playButtonEffect.TurnOn();
+        yield return UIUtility.Instance.StartCoroutine(
+            UIUtility.Instance.FadeOverTime(this.playButtonCanvasGroup, this.playButtonFadeTime, 1));
 
         this.mainCanvasGroup.interactable = true;
         this.mainCanvasGroup.blocksRaycasts = true;
@@ -89,18 +112,24 @@ public class GameSelectPanel : MenuPanel
         this.mainCanvasGroup.interactable = false;
         this.mainCanvasGroup.blocksRaycasts = false;
 
-        // Turn off play button effect
+        // Turn off play button effect and fade out
         this.playButtonEffect.TurnOff();
+        yield return UIUtility.Instance.StartCoroutine(
+            UIUtility.Instance.FadeOverTime(this.playButtonCanvasGroup, this.playButtonFadeTime, 0));
 
         // Fade out preview
         UIUtility.Instance.StartCoroutine(
            UIUtility.Instance.FadeOverTime(this.previewCanvasGroupList[this.currentPreviewIndex], this.previewFadeTime, 0));
 
         // Turn off game selection button effects
-        foreach (CanvasEffect effect in this.gameSelectionButtonEffects)
+        foreach (CanvasEffect effect in this.previewSwapButtonEffects)
         {
             effect.TurnOff();
         }
+
+        // Fade out preview swap canvas group
+        UIUtility.Instance.StartCoroutine(
+           UIUtility.Instance.FadeOverTime(this.swapButtonCanvasGroup, this.swapButtonFadeTime, 0));
 
         yield return new WaitForSeconds(this.fadeDelay);
 
@@ -109,7 +138,7 @@ public class GameSelectPanel : MenuPanel
 
         // Fade out text groups
         UIUtility.Instance.StartCoroutine(
-            UIUtility.Instance.FadeListOverTime(this.textCanvasGroupList, this.textFadeTime, 0, true));
+            UIUtility.Instance.FadeOverTime(this.titleCanvasGroup, this.titleGroupFadeTime, 0));
 
         yield return new WaitForSeconds(this.fadeDelay);
 
@@ -119,6 +148,8 @@ public class GameSelectPanel : MenuPanel
 
         // Stop playing the current preview's video
         this.videoPlayerList[this.currentPreviewIndex].Stop();
+
+        this.playButtonCanvasGroup.alpha = 0;
 
         yield return null;
     }

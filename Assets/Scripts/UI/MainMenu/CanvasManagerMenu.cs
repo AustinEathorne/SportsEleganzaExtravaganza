@@ -77,7 +77,7 @@ public class CanvasManagerMenu : MonoSingleton<CanvasManagerMenu>
 
 public enum MenuState
 {
-    Start = 0, GameSelect
+    Splash = 0, Start, MaineMenu, GameSelect
 }
 
 

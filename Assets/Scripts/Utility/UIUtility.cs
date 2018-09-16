@@ -22,12 +22,17 @@ public class UIUtility : MonoSingleton<UIUtility>
 
         while (elapsedTime < _travelTime)
 		{
+            if (_rTransform == null)
+                yield break;
+
             _rTransform.anchoredPosition = Vector3.Lerp(startPosition, _target, (elapsedTime / _travelTime));
             elapsedTime += Time.deltaTime;
 			yield return null;
 		}
 
-        _rTransform.anchoredPosition = _target;
+        if(_rTransform != null)
+            _rTransform.anchoredPosition = _target;
+
         yield return null;
     }
 

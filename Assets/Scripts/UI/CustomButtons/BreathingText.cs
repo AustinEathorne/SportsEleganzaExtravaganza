@@ -10,9 +10,9 @@ public class BreathingText : CanvasEffect
     public List<RectTransform> textTransformList;
 
     [Header("Scale")]
-    [Range(0.5f, 0.7f)]
+    [Range(0.5f, 0.9f)]
     public float minScale;
-    [Range(0.75f, 1.0f)]
+    [Range(0.95f, 1.0f)]
     public float maxScale;
 
     [Header("Scale Time")]

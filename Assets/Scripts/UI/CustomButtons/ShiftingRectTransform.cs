@@ -10,6 +10,7 @@ public class ShiftingRectTransform :  CanvasEffect
 
     [Header("Bools")]
     public bool isHorizontalShift;
+    public bool isInitialTargetMax;
 
     [Header("Range")]
     [Range(-10f, 0f)]
@@ -32,6 +33,13 @@ public class ShiftingRectTransform :  CanvasEffect
     public void Awake()
     {
         this.startPosition = this.rectTransform.anchoredPosition;
+
+        if (this.isInitialTargetMax)
+        {
+            float temp = this.minPos;
+            this.minPos = maxPos;
+            this.maxPos = temp;
+        }
     }
 
     public override IEnumerator Run()
@@ -46,7 +54,7 @@ public class ShiftingRectTransform :  CanvasEffect
             UIUtility.Instance.StopCoroutine(this.shiftRoutine);
         }
 
-        // Shift to min position
+        // Shift to start target position
         this.targetPosition = this.isHorizontalShift ? 
             new Vector2(this.startPosition.x + this.minPos, this.startPosition.y) :
             new Vector2(this.startPosition.x, this.startPosition.y + this.minPos);
