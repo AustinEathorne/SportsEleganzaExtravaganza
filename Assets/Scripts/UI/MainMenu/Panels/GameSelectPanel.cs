@@ -19,8 +19,9 @@ public class GameSelectPanel : MenuPanel
     protected List<CanvasGroup> textCanvasGroupList;
 
     [Header("Buttons")]
-    [SerializeField]
-    private List<CustomButton> buttonList;
+    public CanvasEffect playButtonEffect;
+    public CanvasEffect backButtonEffect;
+    public List<CanvasEffect> gameSelectionButtonEffects;
 
     [Header("Values")]
     [SerializeField]
@@ -56,18 +57,24 @@ public class GameSelectPanel : MenuPanel
 
         yield return new WaitForSeconds(this.fadeDelay);
 
-        // Turn on buttons
-        for (int i = 0; i < this.buttonList.Count; i++)
-        {
-            this.buttonList[i].CallTurnOn();
-        }
+        // Turn on back button effect
+        this.backButtonEffect.TurnOn();
 
         // Start playing the first preview's video
         this.videoPlayerList[this.currentPreviewIndex].Play();
 
+        // Turn on game selection button effects
+        foreach (CanvasEffect effect in this.gameSelectionButtonEffects)
+        {
+            effect.TurnOn();
+        }
+
         // Yield preview fade in
         yield return UIUtility.Instance.StartCoroutine(
            UIUtility.Instance.FadeOverTime(this.previewCanvasGroupList[this.currentPreviewIndex], this.previewFadeTime, 1));
+
+        // Turn on play button effect
+        this.playButtonEffect.TurnOn();
 
         this.mainCanvasGroup.interactable = true;
         this.mainCanvasGroup.blocksRaycasts = true;
@@ -82,17 +89,23 @@ public class GameSelectPanel : MenuPanel
         this.mainCanvasGroup.interactable = false;
         this.mainCanvasGroup.blocksRaycasts = false;
 
-        // Turn off buttons
-        for (int i = 0; i < this.buttonList.Count; i++)
-        {
-            this.buttonList[i].CallTurnOff();
-        }
+        // Turn off play button effect
+        this.playButtonEffect.TurnOff();
 
         // Fade out preview
         UIUtility.Instance.StartCoroutine(
            UIUtility.Instance.FadeOverTime(this.previewCanvasGroupList[this.currentPreviewIndex], this.previewFadeTime, 0));
 
+        // Turn off game selection button effects
+        foreach (CanvasEffect effect in this.gameSelectionButtonEffects)
+        {
+            effect.TurnOff();
+        }
+
         yield return new WaitForSeconds(this.fadeDelay);
+
+        // Turn off back button effect
+        this.backButtonEffect.TurnOff();
 
         // Fade out text groups
         UIUtility.Instance.StartCoroutine(

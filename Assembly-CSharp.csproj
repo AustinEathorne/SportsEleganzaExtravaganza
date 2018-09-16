@@ -178,14 +178,13 @@
      <Compile Include="Assets\Scripts\PhysicsLabScripts\Lab3_NetForce.cs" />
      <Compile Include="Assets\Scripts\PhysicsLabScripts\Lab4_ProjectileIntro.cs" />
      <Compile Include="Assets\Scripts\PhysicsLabScripts\Lab5_HomeRunDerby.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\Base\CustomButton.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\BreathingImageButton.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\BreathingTextButton.cs" />
+     <Compile Include="Assets\Scripts\UI\CustomButtons\Base\CanvasEffect.cs" />
+     <Compile Include="Assets\Scripts\UI\CustomButtons\BreathingText.cs" />
+     <Compile Include="Assets\Scripts\UI\CustomButtons\ShiftingRectTransform.cs" />
      <Compile Include="Assets\Scripts\UI\DingerTime\MenuController.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu\CanvasManagerMenu.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu\Panels\Base\MenuPanel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu\Panels\GameSelectPanel.cs" />
-     <Compile Include="Assets\Scripts\UI\MainMenu\Panels\MainMenuPanel.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu\Panels\StartPanel.cs" />
      <Compile Include="Assets\Scripts\Utility\DebugFrameRate.cs" />
      <Compile Include="Assets\Scripts\Utility\ListUtility.cs" />

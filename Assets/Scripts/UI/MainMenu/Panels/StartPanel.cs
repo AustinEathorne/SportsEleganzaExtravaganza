@@ -8,26 +8,36 @@ public class StartPanel : MenuPanel
 {
     [Header("Start Button")]
     [SerializeField]
-    private CustomButton startButton;
+    private CanvasEffect startTextEffect;
 
     [Header("Title Text")]
     [SerializeField]
     private CanvasGroup titleCanvasGroup;
     [SerializeField]
     private float titleFadeTime;
+    [SerializeField]
+    private CanvasGroup buttonCanvasGroup;
+    [SerializeField]
+    private float buttonFadeTime;
 
 
 
     protected override IEnumerator OpenPanel()
     {
+        this.buttonCanvasGroup.alpha = 0;
+        this.mainCanvasGroup.alpha = 1;
+
         // Fade in title
         yield return UIUtility.Instance.StartCoroutine(UIUtility.Instance.FadeOverTime(this.titleCanvasGroup, this.titleFadeTime, 1));
 
-        // Turn on start button
-        this.startButton.CallTurnOn();
+        // Turn on start button effect
+        this.startTextEffect.TurnOn();
 
         this.mainCanvasGroup.interactable = true;
         this.mainCanvasGroup.blocksRaycasts = true;
+
+        // Fade in start button
+        yield return UIUtility.Instance.StartCoroutine(UIUtility.Instance.FadeOverTime(this.buttonCanvasGroup, this.buttonFadeTime, 1));
 
         yield return null;
     }
@@ -37,11 +47,17 @@ public class StartPanel : MenuPanel
         this.mainCanvasGroup.interactable = false;
         this.mainCanvasGroup.blocksRaycasts = false;
 
-        // Turn on start button
-        this.startButton.CallTurnOff();
+        // Turn off start button effect
+        this.startTextEffect.TurnOff();
 
         // Fade out title
-        yield return UIUtility.Instance.StartCoroutine(UIUtility.Instance.FadeOverTime(this.titleCanvasGroup, this.titleFadeTime, 0));
+        UIUtility.Instance.StartCoroutine(UIUtility.Instance.FadeOverTime(this.titleCanvasGroup, this.titleFadeTime, 0));
+
+        // Fade out group
+        yield return UIUtility.Instance.StartCoroutine(UIUtility.Instance.FadeOverTime(this.mainCanvasGroup, this.titleFadeTime, 0.0f));
+
+        this.buttonCanvasGroup.alpha = 0;
+        this.mainCanvasGroup.alpha = 0;
 
         yield return null;
     }
