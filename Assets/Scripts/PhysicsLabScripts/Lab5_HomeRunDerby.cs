@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Lab5_HomeRunDerby : MonoBehaviour 
 {
-	[Header("Simulation")]
+    [Header("Simulation")]
 	[SerializeField]
 	private int numberOfPlayers = 2;
 	private int currentPlayer = 0;
@@ -45,6 +45,7 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 	private bool hasSelectedDifficulty = false;
 
     private bool hasTapped = false;
+    private bool isWaitingForInput = false;
 
 	[Header("Baseball")]
 	[SerializeField]
@@ -96,10 +97,6 @@ public class Lab5_HomeRunDerby : MonoBehaviour
     //[SerializeField]
     //private Text currentCameraTextBG;
 
-    // Tap Area
-    [SerializeField]
-    private Button tapAreaButton;
-
 	//Players
 	[SerializeField]
 	private Text currentPlayerText;
@@ -134,13 +131,11 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 	[SerializeField]
 	private Text gameOverTextBg;
 
-
 	[Header("Misc.")]
 	[SerializeField]
 	private Lab5Sounds audioManager;
 	[SerializeField]
 	private Transform angleIndicator;
-
 
 	[Header("Debug")]
 	[SerializeField]
@@ -151,6 +146,7 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 	private float powerMeterTick = 0.1f;
 	[SerializeField]
 	private float angleMeterTick = 0.1f;
+
 
 
 	// Setup
@@ -252,21 +248,19 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 		this.currentBallRigidbody = this.currentBallObj.GetComponent<Rigidbody>();
 		this.currentBallObj.GetComponent<Baseball>().SetLabManager(this);
 
-        // Enable tap area
-        this.tapAreaButton.interactable = true;
+        // Get user input
+        this.isWaitingForInput = true;
+        yield return this.StartCoroutine(this.RunPowerMeter());
+        yield return this.StartCoroutine(this.RunAngleMeter());
+        this.isWaitingForInput = false;
+        yield return new WaitForSeconds(0.1f);
 
-		// Get user input
-		yield return this.StartCoroutine(this.RunPowerMeter());
-		yield return this.StartCoroutine(this.RunAngleMeter());
-		yield return new WaitForSeconds(0.1f);
-
-		// Wait for ball hit
-		//yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        // Wait for ball hit
+        //yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        this.isWaitingForInput = true;
         yield return new WaitUntil(() => this.hasTapped == true);
         this.hasTapped = false;
-
-        // Disable tap area
-        this.tapAreaButton.interactable = false;
+        this.isWaitingForInput = false;
 
         // Update UI
         this.spaceTextContainer.SetActive(false);
@@ -503,18 +497,15 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 	}
 
 
-	// Update TODO: switch camera button, remove update
-	private void Update()
-	{
-		if(Input.GetMouseButtonDown(1))
-		{
-			this.CameraSwitch();
-		}	
-	}
-
     // Ball Hit Mobile
-    public void OnTapAreaInput()
+    public void OnTouchEvent()
     {
+        Debug.Log("Touch Event Invoked");
+
+        if (this.isWaitingForInput == false)
+            return;
+
+        Debug.Log("Has tapped");
         this.hasTapped = true;
     }
 
@@ -538,7 +529,7 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 
 
 	// Camera/UI stuff
-	private void CameraSwitch()
+	public void CameraSwitch()
 	{
 		this.currentCamera++;
 		if(this.currentCamera >= cameraList.Count)
@@ -594,6 +585,7 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 		this.difficulty = value;
 		this.hasSelectedDifficulty = true;
 	}
+
 
 	// Get/Set
 	public GameObject GetCurrentBall()

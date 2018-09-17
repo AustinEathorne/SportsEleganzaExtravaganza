@@ -169,6 +169,7 @@
      <Compile Include="Assets\3rd Party\SerializableDictionary\Example\UserSerializableDictionaries.cs" />
      <Compile Include="Assets\3rd Party\SerializableDictionary\SerializableDictionary.cs" />
      <Compile Include="Assets\Classes\Json\JsonFile.cs" />
+     <Compile Include="Assets\Scripts\DingerTime\PlayerControllerDingerTime.cs" />
      <Compile Include="Assets\Scripts\Lab5\Baseball.cs" />
      <Compile Include="Assets\Scripts\Lab5\CameraFollow.cs" />
      <Compile Include="Assets\Scripts\Lab5\FlashText.cs" />
