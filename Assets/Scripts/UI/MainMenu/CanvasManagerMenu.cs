@@ -21,6 +21,10 @@ public class CanvasManagerMenu : MonoSingleton<CanvasManagerMenu>
     private IEnumerator stateChangeRoutine;
 
 
+    public void Awake()
+    {
+        Screen.orientation = ScreenOrientation.Portrait;
+    }
 
     public IEnumerator Start()
     {

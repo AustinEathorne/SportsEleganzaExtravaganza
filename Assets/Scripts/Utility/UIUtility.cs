@@ -644,7 +644,7 @@ public class UIUtility : MonoSingleton<UIUtility>
     /// <param name="_shiftTime"></param>
     /// <param name="_targetColour"></param>
     /// <returns></returns>
-    public IEnumerator ShiftColour(Image _image, float _shiftTime, Color _targetColour)
+    public IEnumerator ShiftColour(Image _image, float _shiftTime, Color _targetColour, bool _preserveAlpha)
     {
 		Color startCol = _image.color;
 		float elapsedTime = 0.0f;
@@ -652,8 +652,10 @@ public class UIUtility : MonoSingleton<UIUtility>
 		while(elapsedTime < _shiftTime)
 		{
             // For fading and colour shifting at the same time
-            startCol = new Color(startCol.r, startCol.g, startCol.b, _image.color.a);
-            _targetColour = new Color(_targetColour.r, _targetColour.g, _targetColour.b, _image.color.a);
+            startCol = _preserveAlpha ? new Color(startCol.r, startCol.g, startCol.b, _image.color.a) :
+                new Color(startCol.r, startCol.g, startCol.b, startCol.a);
+            _targetColour = _preserveAlpha ? new Color(_targetColour.r, _targetColour.g, _targetColour.b, _image.color.a) :
+                new Color(_targetColour.r, _targetColour.g, _targetColour.b, _targetColour.a);
 
             _image.color = Color.Lerp(startCol, _targetColour, elapsedTime / _shiftTime);
 			elapsedTime += Time.deltaTime;
@@ -673,7 +675,7 @@ public class UIUtility : MonoSingleton<UIUtility>
     /// <param name="_targetColour"></param>
     /// <param name="_isSimultaneous"></param>
     /// <returns></returns>
-    public IEnumerator ShiftListColours(List<Image> _images, float _shiftTime, Color _targetColour, bool _isSimultaneous)
+    public IEnumerator ShiftListColours(List<Image> _images, float _shiftTime, Color _targetColour, bool _isSimultaneous, bool _preserveAlpha)
     {
 		for(int i = 0; i < _images.Count; i++)
 		{
@@ -681,22 +683,22 @@ public class UIUtility : MonoSingleton<UIUtility>
 			{
 				if(i < _images.Count - 1)
 				{
-					this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColour));
+					this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColour, _preserveAlpha));
 				}
 				else
 				{
-					yield return this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColour));
+					yield return this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColour, _preserveAlpha));
 				}
 			}
 			else
 			{
-				this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColour));
+				this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColour, _preserveAlpha));
 			}
 		}
 		yield return null;
 	}
 
-    public IEnumerator ShiftListColours(List<Image> _images, float _shiftTime, List<Color> _targetColours, bool _isSimultaneous)
+    public IEnumerator ShiftListColours(List<Image> _images, float _shiftTime, List<Color> _targetColours, bool _isSimultaneous, bool _preserveAlpha)
     {
         for (int i = 0; i < _images.Count; i++)
         {
@@ -704,16 +706,16 @@ public class UIUtility : MonoSingleton<UIUtility>
             {
                 if (i < _images.Count - 1)
                 {
-                    this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i]));
+                    this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i], _preserveAlpha));
                 }
                 else
                 {
-                    yield return this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i]));
+                    yield return this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i], _preserveAlpha));
                 }
             }
             else
             {
-                this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i]));
+                this.StartCoroutine(this.ShiftColour(_images[i], _shiftTime, _targetColours[i], _preserveAlpha));
             }
         }
         yield return null;

@@ -5,7 +5,9 @@ using UnityEngine.Events;
 
 public class PlayerControllerDingerTime : MonoBehaviour
 {
-    public UnityEvent touchEvent = new UnityEvent();
+    public RectTransform touchArea;
+
+    public UnityEvent touchEvent;
 
 
 
@@ -29,7 +31,10 @@ public class PlayerControllerDingerTime : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                this.touchEvent.Invoke();
+                if (RectTransformUtility.RectangleContainsScreenPoint(this.touchArea, Input.mousePosition))
+                {
+                    this.touchEvent.Invoke();
+                }
             }
 
             yield return null;
@@ -46,7 +51,10 @@ public class PlayerControllerDingerTime : MonoBehaviour
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Began)
                 {
-                    this.touchEvent.Invoke();
+                    if (RectTransformUtility.RectangleContainsScreenPoint(this.touchArea, Input.GetTouch(0).position))
+                    {
+                        this.touchEvent.Invoke();
+                    }                    
                 }
             }
 
@@ -55,5 +63,4 @@ public class PlayerControllerDingerTime : MonoBehaviour
 
         yield return null;
     }
-
 }

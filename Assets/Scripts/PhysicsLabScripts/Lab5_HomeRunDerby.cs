@@ -149,6 +149,11 @@ public class Lab5_HomeRunDerby : MonoBehaviour
 
 
 
+    private void Awake()
+    {
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+    }
+
 	// Setup
 	private IEnumerator Start()
 	{
