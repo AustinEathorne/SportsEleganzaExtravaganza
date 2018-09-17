@@ -21,6 +21,8 @@ public class Baseball : MonoBehaviour
 
 	private Lab5_HomeRunDerby labManager;
 
+
+
 	private void Awake()
 	{
 		this.origPos = this.cameraObj.transform.localPosition;
@@ -71,7 +73,6 @@ public class Baseball : MonoBehaviour
 		while(Vector3.Distance(this.cameraObj.transform.localPosition, this.camPos) >= 0.5f)
 		{
 			this.cameraObj.transform.localPosition = Vector3.Lerp(this.cameraObj.transform.localPosition, this.camPos, this.camSpeed * Time.deltaTime);
-
 			this.cameraObj.transform.localRotation = Quaternion.Lerp(this.cameraObj.transform.rotation, Quaternion.Euler(this.camRot), this.camSpeed * Time.deltaTime);
 
 			yield return null;
@@ -82,7 +83,6 @@ public class Baseball : MonoBehaviour
 		while(Vector3.Distance(this.cameraObj.transform.localPosition, this.origPos) >= 0.5f)
 		{
 			this.cameraObj.transform.localPosition = Vector3.Lerp(this.cameraObj.transform.localPosition, this.origPos, this.camSpeed * Time.deltaTime);
-
 			this.cameraObj.transform.localRotation = Quaternion.Lerp(this.cameraObj.transform.rotation, Quaternion.Euler(0.0f, -16.0f, 0.0f), this.camSpeed * Time.deltaTime);
 
 			yield return null;

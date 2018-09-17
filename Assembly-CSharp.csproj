@@ -169,6 +169,7 @@
      <Compile Include="Assets\3rd Party\SerializableDictionary\Example\UserSerializableDictionaries.cs" />
      <Compile Include="Assets\3rd Party\SerializableDictionary\SerializableDictionary.cs" />
      <Compile Include="Assets\Classes\Json\JsonFile.cs" />
+     <Compile Include="Assets\Scripts\DingerTime\PlayerControllerDingerTime.cs" />
      <Compile Include="Assets\Scripts\Lab5\Baseball.cs" />
      <Compile Include="Assets\Scripts\Lab5\CameraFollow.cs" />
      <Compile Include="Assets\Scripts\Lab5\FlashText.cs" />
@@ -178,9 +179,10 @@
      <Compile Include="Assets\Scripts\PhysicsLabScripts\Lab3_NetForce.cs" />
      <Compile Include="Assets\Scripts\PhysicsLabScripts\Lab4_ProjectileIntro.cs" />
      <Compile Include="Assets\Scripts\PhysicsLabScripts\Lab5_HomeRunDerby.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\Base\CanvasEffect.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\BreathingText.cs" />
-     <Compile Include="Assets\Scripts\UI\CustomButtons\ShiftingRectTransform.cs" />
+     <Compile Include="Assets\Scripts\UI\CanvasEffects\Base\CanvasEffect.cs" />
+     <Compile Include="Assets\Scripts\UI\CanvasEffects\BreathingText.cs" />
+     <Compile Include="Assets\Scripts\UI\CanvasEffects\ColorShiftImage.cs" />
+     <Compile Include="Assets\Scripts\UI\CanvasEffects\ShiftingRectTransform.cs" />
      <Compile Include="Assets\Scripts\UI\DingerTime\MenuController.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu\CanvasManagerMenu.cs" />
      <Compile Include="Assets\Scripts\UI\MainMenu\Panels\Base\MenuPanel.cs" />
