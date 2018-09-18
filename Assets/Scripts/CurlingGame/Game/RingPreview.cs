@@ -18,6 +18,7 @@ public class RingPreview : MonoBehaviour {
 	private bool isMovingUp = false;
 
 
+
 	public void MoveScreen()
 	{
 		if(!this.isMoving)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour {
+public class AudioManagerCurling : MonoBehaviour {
 
 	[SerializeField]
 	private AudioClip glideSfx;
@@ -21,6 +21,9 @@ public class AudioManager : MonoBehaviour {
 
 
 	private bool isPlayingClip = false;
+
+
+
 
 	public IEnumerator PlayRandomHardClip(int rand)
 	{

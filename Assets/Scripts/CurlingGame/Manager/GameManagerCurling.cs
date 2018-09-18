@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour {
+public class GameManagerCurling : MonoBehaviour {
 
 	[Header("Prefabs")]
 	[SerializeField]
@@ -17,11 +17,11 @@ public class GameManager : MonoBehaviour {
 
 	[Header("Managers")]
 	[SerializeField]
-	private InputManager inputManager;
+	private PlayerControllerCurling inputManager;
 	[SerializeField]
-	private AudioManager audioManager;
+	private AudioManagerCurling audioManager;
 	[SerializeField]
-	private CanvasManager canvasManager;
+	private CanvasManagerCurling canvasManager;
 
 	[Header("Scene References")]
 	[SerializeField]
@@ -92,6 +92,7 @@ public class GameManager : MonoBehaviour {
 	private bool isAllowedToMove = false;
 	private bool isAllowedToPosition = false;
 	private bool isAllowedToSweep = false;
+
 
 
 	private IEnumerator Start()
@@ -167,13 +168,12 @@ public class GameManager : MonoBehaviour {
 			this.canvasManager.SetAccelerationSliderValue(this.isPlayerOneTurn ? this.p1_acceleration : this.p2_acceleration);
 		}
 
-		this.canvasManager.UpdateSliderTextValues();
-
-		string str = this.isPlayerOneTurn ? "Player 1's Turn" : "Player 2's Turn";
-		this.canvasManager.SetPlayerTurnText(str);
+        this.canvasManager.UpdateSliderTextValues();
+		this.canvasManager.SetPlayerTurnText(this.isPlayerOneTurn ? "Player 1's Turn" : "Player 2's Turn");
 
 		// Instantiate rock
 		GameObject obj = Instantiate(rockPrefab, this.spawnTransform.position, Quaternion.identity) as GameObject;
+
 		// Reset friction coefficient
 		obj.GetComponent<Collider>().material.dynamicFriction = this.startCoefficient;
 		this.icePlane.material.dynamicFriction = this.startCoefficient;
@@ -195,14 +195,6 @@ public class GameManager : MonoBehaviour {
 
 		// Add to the active list
 		this.activeRockList.Add(obj);
-
-		// Turn last rocks rigidbody contraints off
-		/*
-		if(this.currentTurn != 1)
-		{
-			this.activeRockList[this.currentTurn - 2].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-		}
-		*/
 
 		// Wait for confirmation of stats (mass & acceleration)
 		yield return new WaitUntil(() => this.isAllowedToMove == true); // Set on button click
@@ -235,8 +227,6 @@ public class GameManager : MonoBehaviour {
 
 		// Predict initial rock displacement
 		float displacement = this.CalculateDisplacement();
-		displacement = this.CalculateDisplacement();
-		//Debug.Log("Displacement: " + displacement.ToString());
 
 		// Set distance indicator position to the far end board if the displacement is off the map
 		if(displacement > 140.0f) // off map
@@ -252,7 +242,7 @@ public class GameManager : MonoBehaviour {
 
 		// While rock is moving
 		float rockPos = this.activeRockList[this.currentTurn - 1].transform.position.z;
-		while(Vector3.Distance(this.activeRockList[this.currentTurn - 1].GetComponent<Rigidbody>().velocity, Vector3.zero) >= Mathf.Epsilon)//&& (displacement - rockPos) >= 0.001f)
+		while(Vector3.Distance(this.activeRockList[this.currentTurn - 1].GetComponent<Rigidbody>().velocity, Vector3.zero) >= Mathf.Epsilon)
 		{
 			// check if friction coefficient has decreased and if velocity has increased (re-calculate displacement & place indicator)
 			if(this.CheckHasDecreased() || this.HasVelocityIncreased())
@@ -326,6 +316,7 @@ public class GameManager : MonoBehaviour {
 		SceneManager.LoadScene(0);
 	}
 
+
 	private void FixedUpdate()
 	{
 		if(this.inputManager.GetIsMovingRock())
@@ -384,6 +375,7 @@ public class GameManager : MonoBehaviour {
 		return false;
 	}
 
+
 	// Get/Set
 	public GameObject GetActiveRock()
 	{
@@ -414,6 +406,7 @@ public class GameManager : MonoBehaviour {
 	{
 		this.hasDecreased = value;
 	}
+
 
 	// Calculate/Convert
 	private float CalculateForce() // Check player & calculate force

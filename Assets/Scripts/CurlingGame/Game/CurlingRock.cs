@@ -27,14 +27,14 @@ public class CurlingRock : MonoBehaviour
 	private Vector3 broomTarget1;
 	[SerializeField]
 	private Vector3 broomTarget2;
-	[SerializeField]
-	private MeshRenderer broomMeshRenderer;
 
 	[SerializeField]
 	private float maxVelocity = 250.0f;
 
 	private bool hasPassedReleaseLine = false;
 	private bool isSweeping = false;
+
+
 
 	private void Awake()
 	{
@@ -60,9 +60,6 @@ public class CurlingRock : MonoBehaviour
 			this.broomTransform2.localPosition = Vector3.MoveTowards(this.broomTransform2.localPosition, this.broomTarget2, this.broomSpeed * Time.deltaTime);
 			yield return null;
 		}
-
-		//this.broomTransform1.localPosition = this.broomTarget1;
-		//this.broomTransform2.localPosition = this.broomTarget2;
 
 		while(Vector3.Distance(this.broomTransform1.localPosition, this.broomStart1) >= 0.1f)
 		{
@@ -93,6 +90,7 @@ public class CurlingRock : MonoBehaviour
 		this.transform.position += direction;
 	}
 		
+
 	// Enter - Add int value to list
 	// Exit  - Remove int value from list
 	// Check - find lowest value in the list
@@ -129,7 +127,7 @@ public class CurlingRock : MonoBehaviour
 		if(col.transform.tag == "Rock")
 		{
 			Debug.Log("HitRock");
-			GameObject.FindObjectOfType<GameManager>().SetHasDecreased(true); // shouldve made another function/ renamed this..
+			GameObject.FindObjectOfType<GameManagerCurling>().SetHasDecreased(true); // shouldve made another function/ renamed this..
 		}
 	}
 
@@ -162,10 +160,12 @@ public class CurlingRock : MonoBehaviour
 	{
 		return this.hasPassedReleaseLine;
 	}
+
 	public GameObject GetShotIndicator()
 	{
 		return this.shotIndicator;
 	}
+
 	public GameObject GetBroomContainer()
 	{
 		return this.BroomContainer;

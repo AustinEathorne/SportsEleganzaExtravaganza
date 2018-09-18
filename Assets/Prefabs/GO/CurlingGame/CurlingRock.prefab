@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 23919886393788374}
   - component: {fileID: 54061380791085704}
   - component: {fileID: 114430874436561936}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CurlingRock
   m_TagString: Rock
   m_Icon: {fileID: 0}
@@ -675,7 +675,6 @@ MonoBehaviour:
   broomStart2: {x: -2.5, y: 1.92, z: 4}
   broomTarget1: {x: 0, y: 1.92, z: 2}
   broomTarget2: {x: 0, y: 1.92, z: 4}
-  broomMeshRenderer: {fileID: 23604326208787140}
   maxVelocity: 120
 --- !u!135 &135574430182320832
 SphereCollider:

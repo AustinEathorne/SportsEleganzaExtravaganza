@@ -929,6 +929,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 761482085}
   audioManager: {fileID: 769310176}
+  raycastLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!4 &93866189
 Transform:
   m_ObjectHideFlags: 0
