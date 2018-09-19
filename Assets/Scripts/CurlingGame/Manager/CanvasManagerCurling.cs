@@ -48,9 +48,13 @@ public class CanvasManagerCurling : MonoBehaviour {
     [Header("Game Containers")]
     [SerializeField]
     private List<GameObject> gameContainers;
+    [SerializeField]
+    private GameObject endGameContainer;
 
     private float massValue = 0.0f;
 	private float accelerationValue = 0.0f;
+
+
 
 	// Called from GameManager
 	public void UpdatePointText(float p1Score, float p2Score)
@@ -78,9 +82,9 @@ public class CanvasManagerCurling : MonoBehaviour {
 		this.statSubmitButton.SetActive(value);
 	}
 
-	public void EnableWinnerText(bool value)
+	public void EnableEndGameContainer(bool value)
 	{
-		this.winnerText.gameObject.SetActive(value);
+		this.endGameContainer.SetActive(value);
 	}
 
 	// Set Slider Values

@@ -295,8 +295,12 @@ public class GameManagerCurling : MonoBehaviour {
 
 	private IEnumerator EndGame()
 	{
-		// Check Score
-		string str = "";
+        this.audioManager.StartCoroutine(this.audioManager.PlayWinnerGagnant());
+
+        yield return new WaitForSeconds(0.1f);
+
+        // Check Score
+        string str = "";
 
 		if(this.p1_totalScore > this.p2_totalScore)
 		{
@@ -314,20 +318,9 @@ public class GameManagerCurling : MonoBehaviour {
         // Display Winner Text
         this.canvasManager.DisableGameUI();
         this.canvasManager.SetWinnertext(str);
-		this.canvasManager.EnableWinnerText(true);
+		this.canvasManager.EnableEndGameContainer(true);
 
-		this.audioManager.StartCoroutine(this.audioManager.PlayWinnerGagnant());
-
-        //TODO: end game properly
-
-		// Wait for escape key
-		while(!Input.GetKeyDown(KeyCode.Escape))
-		{
-			yield return null;
-		}
-
-		// Reload Scene
-		SceneManager.LoadScene(0);
+        yield return null;
 	}
 
 
@@ -392,9 +385,21 @@ public class GameManagerCurling : MonoBehaviour {
         this.GetActiveRock().transform.position = pos;
     }
 
+    // End Game
+    public void Restart()
+    {
+        // Reload Scene
+        SceneManager.LoadScene(2);
+    }
 
-	// Get/Set
-	public GameObject GetActiveRock()
+    public void Exit()
+    {
+        // Load Scene
+        SceneManager.LoadScene(0);
+    }
+
+    // Get/Set
+    public GameObject GetActiveRock()
 	{
 		return this.activeRockList[this.currentTurn - 1];
 	}
