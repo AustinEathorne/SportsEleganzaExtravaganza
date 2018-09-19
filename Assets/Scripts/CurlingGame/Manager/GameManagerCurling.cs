@@ -311,11 +311,14 @@ public class GameManagerCurling : MonoBehaviour {
 			str = "PLAYER 1 & PLAYER 2";
 		}
 
-		// Display Winner Text
-		this.canvasManager.SetWinnertext(str);
+        // Display Winner Text
+        this.canvasManager.DisableGameUI();
+        this.canvasManager.SetWinnertext(str);
 		this.canvasManager.EnableWinnerText(true);
 
 		this.audioManager.StartCoroutine(this.audioManager.PlayWinnerGagnant());
+
+        //TODO: end game properly
 
 		// Wait for escape key
 		while(!Input.GetKeyDown(KeyCode.Escape))

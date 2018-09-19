@@ -45,6 +45,10 @@ public class CanvasManagerCurling : MonoBehaviour {
     [SerializeField]
     private List<GameObject> helpTextContainers;
 
+    [Header("Game Containers")]
+    [SerializeField]
+    private List<GameObject> gameContainers;
+
     private float massValue = 0.0f;
 	private float accelerationValue = 0.0f;
 
@@ -133,6 +137,15 @@ public class CanvasManagerCurling : MonoBehaviour {
     public void DisableAllHelpText()
     {
         foreach (GameObject go in this.helpTextContainers)
+        {
+            go.SetActive(false);
+        }
+    }
+
+    // Game containers
+    public void DisableGameUI()
+    {
+        foreach(GameObject go in this.gameContainers)
         {
             go.SetActive(false);
         }

@@ -27,34 +27,45 @@ public class PlayerControllerCurling : MonoBehaviour
 
     public IEnumerator PositionRock()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Application.isEditor)
         {
-            this.StartCoroutine(this.OnRockTouch());
+            if (Input.GetMouseButtonDown(0))
+                this.StartCoroutine(this.OnRockTouch());
+            if (Input.GetMouseButton(0))
+                this.StartCoroutine(this.OnRockMove());
+            if (Input.GetMouseButtonUp(0))
+                this.StartCoroutine(this.OnRockRelease());
         }
-        if (Input.GetMouseButton(0))
+        else
         {
-            this.StartCoroutine(this.OnRockMove());
+            if (Input.touchCount > 0)
+            {
+                if(Input.GetTouch(0).phase == TouchPhase.Began)
+                    this.StartCoroutine(this.OnRockTouch());
+                if (Input.GetTouch(0).phase == TouchPhase.Moved)
+                    this.StartCoroutine(this.OnRockMove());
+                if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                    this.StartCoroutine(this.OnRockRelease());
+            }
         }
-        if (Input.GetMouseButtonUp(0))
-        {
-            this.StartCoroutine(this.OnRockRelease());
-        }
+        
 
         yield return null;
     }
 
     private IEnumerator OnRockTouch()
     {
-        Ray mouseRay = this.GenerateMouseRay();
+        Ray inputRay = Application.isEditor ? this.GenerateMouseRay() : this.GenerateTouchRay();
         RaycastHit hit;
 
-        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out hit, Mathf.Infinity, this.raycastLayer))
+        if (Physics.Raycast(inputRay.origin, inputRay.direction, out hit, Mathf.Infinity, this.raycastLayer))
         {
             if (hit.transform.tag == "Rock")
             {
                 this.hitPlane = new Plane(Camera.main.transform.forward * -1, this.gameManager.GetActiveRock().transform.position);
 
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Ray ray = Application.isEditor ? Camera.main.ScreenPointToRay(Input.mousePosition) :
+                    Camera.main.ScreenPointToRay(Input.touches[0].position);
                 float rayDistance;
                 this.hitPlane.Raycast(ray, out rayDistance);
                 this.mouseOffset = this.gameManager.GetActiveRock().transform.position - ray.GetPoint(rayDistance);
@@ -79,7 +90,8 @@ public class PlayerControllerCurling : MonoBehaviour
             this.isMovingRock = true;
 
             this.hitPlane = new Plane(Camera.main.transform.forward * -1, this.gameManager.GetActiveRock().transform.position);
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Application.isEditor ? Camera.main.ScreenPointToRay(Input.mousePosition) :
+                Camera.main.ScreenPointToRay(Input.touches[0].position);
             float rayDistance;
             if (this.hitPlane.Raycast(ray, out rayDistance))
             {
@@ -106,19 +118,39 @@ public class PlayerControllerCurling : MonoBehaviour
 
     public IEnumerator AddForceToRock(System.Action<bool> _isAddingForce)
     {
-        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-        _isAddingForce(true);
-
-        // Wait for player to release the space key or if the rock has passed the line
-        while (!Input.GetMouseButtonUp(0))
+        if (Application.isEditor)
         {
-            if (this.gameManager.GetActiveRock().GetComponent<CurlingRock>().GetHasPassedReleaseLine())
-            {
-                yield break;
-            }
+            yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
-            yield return null;
+            _isAddingForce(true);
+
+            // Wait for player to release the space key or if the rock has passed the line
+            while (!Input.GetMouseButtonUp(0))
+            {
+                if (this.gameManager.GetActiveRock().GetComponent<CurlingRock>().GetHasPassedReleaseLine())
+                {
+                    yield break;
+                }
+
+                yield return null;
+            }
+        }
+        else
+        {
+            yield return new WaitUntil(() => Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began);
+
+            _isAddingForce(true);
+
+            // Wait for player to release the space key or if the rock has passed the line
+            while (Input.GetTouch(0).phase != TouchPhase.Ended)
+            {
+                if (this.gameManager.GetActiveRock().GetComponent<CurlingRock>().GetHasPassedReleaseLine())
+                {
+                    yield break;
+                }
+
+                yield return null;
+            }
         }
 
         _isAddingForce(false);
@@ -134,20 +166,36 @@ public class PlayerControllerCurling : MonoBehaviour
     {
         this.isSweepingRock = true;
 
-        while (this.isSweepingRock)
+        if (Application.isEditor)
         {
-            if (Input.GetMouseButton(0))
+            while (this.isSweepingRock)
             {
-                this.gameManager.DecreaseFrictionCoefficient();
-                this.gameManager.StartCoroutine(this.gameManager.GetActiveRock().GetComponent<CurlingRock>().BroomSweep());
+                if (Input.GetMouseButton(0))
+                {
+                    this.gameManager.DecreaseFrictionCoefficient();
+                    this.gameManager.StartCoroutine(this.gameManager.GetActiveRock().GetComponent<CurlingRock>().BroomSweep());
 
-                this.audioManager.StartCoroutine(this.audioManager.PlayRandomHardClip(Random.Range(0, 3)));
+                    this.audioManager.StartCoroutine(this.audioManager.PlayRandomHardClip(Random.Range(0, 3)));
+                }
+
+                yield return null;
             }
-
-            yield return null;
         }
+        else
+        {
+            while (this.isSweepingRock)
+            {
+                if (Input.touchCount > 0)
+                {
+                    this.gameManager.DecreaseFrictionCoefficient();
+                    this.gameManager.StartCoroutine(this.gameManager.GetActiveRock().GetComponent<CurlingRock>().BroomSweep());
 
-        
+                    this.audioManager.StartCoroutine(this.audioManager.PlayRandomHardClip(Random.Range(0, 3)));
+                }
+
+                yield return null;
+            }
+        }
 
         yield return null;
     }
