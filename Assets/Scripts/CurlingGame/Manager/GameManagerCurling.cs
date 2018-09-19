@@ -17,7 +17,7 @@ public class GameManagerCurling : MonoBehaviour {
 
 	[Header("Managers")]
 	[SerializeField]
-	private PlayerControllerCurling inputManager;
+	private PlayerControllerCurling playerController;
 	[SerializeField]
 	private AudioManagerCurling audioManager;
 	[SerializeField]
@@ -89,18 +89,18 @@ public class GameManagerCurling : MonoBehaviour {
 
 	// Bools
 	private bool isPlayerOneTurn = false;
-	private bool isAllowedToMove = false;
-	private bool isAllowedToPosition = false;
-	private bool isAllowedToSweep = false;
+    private bool isReadyForShot = false;
+    private bool isAddingForceToRock = false;
 
 
 
 	private IEnumerator Start()
 	{
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
 		yield return this.StartCoroutine(this.SetUpGame());
 		yield return this.StartCoroutine(this.RunGame());
-		// TODO: end game corountine.
-	}
+        yield return this.StartCoroutine(this.EndGame());
+    }
 
 	private IEnumerator SetUpGame()
 	{
@@ -155,8 +155,6 @@ public class GameManagerCurling : MonoBehaviour {
 			this.CalculatePointTotal();
 			this.canvasManager.UpdatePointText(this.p1_totalScore, this.p2_totalScore);
 		}
-
-		yield return this.StartCoroutine(this.EndGame());
 	}
 
 	private IEnumerator RunTurn()
@@ -178,9 +176,6 @@ public class GameManagerCurling : MonoBehaviour {
 		obj.GetComponent<Collider>().material.dynamicFriction = this.startCoefficient;
 		this.icePlane.material.dynamicFriction = this.startCoefficient;
 
-		// Allow rock positioning
-		this.isAllowedToPosition = true;
-
 		// Name & set material
 		if(this.isPlayerOneTurn)
 		{
@@ -196,9 +191,14 @@ public class GameManagerCurling : MonoBehaviour {
 		// Add to the active list
 		this.activeRockList.Add(obj);
 
-		// Wait for confirmation of stats (mass & acceleration)
-		yield return new WaitUntil(() => this.isAllowedToMove == true); // Set on button click
-		this.isAllowedToMove = false;
+        // Wait for confirmation of stats (mass & acceleration) + rock positioning
+        while (this.isReadyForShot != true)
+        {
+            // Rock positioning
+            this.playerController.StartCoroutine(this.playerController.PositionRock());
+            yield return null;
+        }
+        this.isReadyForShot = false;
 
 		// Disable
 		this.activeRockList[this.currentTurn - 1].GetComponent<CurlingRock>().GetShotIndicator().SetActive(false);
@@ -206,21 +206,18 @@ public class GameManagerCurling : MonoBehaviour {
 		this.releaseLineCollider.enabled = false;
 		this.releaseLineTrigger.enabled = true;
 
-		// Disallow rock positioning
-		this.isAllowedToPosition = false;
-
 		// Calculate force
 		this.currentForce = this.CalculateForce();
 
-		// Start getting input and wait until is has been released
-		this.inputManager.StartCoroutine(this.inputManager.GetShotInput());
-		yield return new WaitUntil(() => this.inputManager.GetIsWaitingForInput() == false);
+        // Start getting input and wait until is has been released - Force is applied in fixed update
+        yield return this.playerController.StartCoroutine(this.playerController.AddForceToRock( _isAddingForce => {
+            if (_isAddingForce)
+                this.isAddingForceToRock = true;
+        }));
+        this.isAddingForceToRock = false;
 
-		// Enable Sweeping
-		this.isAllowedToSweep = true;
-
-		// Play shot audio
-		this.audioManager.StartCoroutine(this.audioManager.PlayGlideSfx());
+        // Play shot audio
+        this.audioManager.StartCoroutine(this.audioManager.PlayGlideSfx());
 
 		// Move in shot preview screen
 		this.shotPreviewScreen.StartCoroutine(this.shotPreviewScreen.MoveScreenDown());
@@ -239,6 +236,9 @@ public class GameManagerCurling : MonoBehaviour {
 			this.distanceIndicator.SetActive(true);
 			this.distanceIndicator.transform.position = new Vector3(this.activeRockList[this.currentTurn - 1].transform.position.x, 0.0f, displacement);
 		}
+
+        // Start getting sweep input
+        this.playerController.StartCoroutine(this.playerController.SweepRock());
 
 		// While rock is moving
 		float rockPos = this.activeRockList[this.currentTurn - 1].transform.position.z;
@@ -266,16 +266,16 @@ public class GameManagerCurling : MonoBehaviour {
 			// Break if were close to the displacement
 			if(this.distanceIndicator.transform.localPosition.z - this.activeRockList[this.currentTurn - 1].transform.localPosition.z <= this.minSweepProximity)
 			{
-				//Debug.Log("Stop - Too Close" + (this.activeRockList[this.currentTurn - 1].transform.localPosition.z - this.distanceIndicator.transform.localPosition.z).ToString());
-				this.isAllowedToSweep = false;
+                //Debug.Log("Stop - Too Close" + (this.activeRockList[this.currentTurn - 1].transform.localPosition.z - this.distanceIndicator.transform.localPosition.z).ToString());
+                this.playerController.SetIsSweeping(false);
 			}
 			yield return null;
 		}
 
 		// Reset
 		this.ResetFrictionCoEfficient();
-		this.isAllowedToSweep = false;
-		this.shotPreviewScreen.StartCoroutine(this.shotPreviewScreen.MoveScreenUp());
+        this.playerController.SetIsSweeping(false);
+        this.shotPreviewScreen.StartCoroutine(this.shotPreviewScreen.MoveScreenUp());
 		this.releaseLineCollider.enabled = true;
 		this.releaseLineTrigger.enabled = false;
 
@@ -319,12 +319,13 @@ public class GameManagerCurling : MonoBehaviour {
 
 	private void FixedUpdate()
 	{
-		if(this.inputManager.GetIsMovingRock())
+		if(this.isAddingForceToRock)
 		{
 			// Debug.Log("moving rock at index: " + (this.currentTurn - 1).ToString());
 			this.activeRockList[this.currentTurn - 1].GetComponent<CurlingRock>().AddForceToRock(this.currentForce);
 		}
 	}
+
 
 	public void ResetFrictionCoEfficient()
 	{
@@ -340,20 +341,15 @@ public class GameManagerCurling : MonoBehaviour {
 			this.hasDecreased = true;
 			this.activeRockList[this.currentTurn - 1].GetComponent<Collider>().material.dynamicFriction -= this.frictionCoefficientDecrease;
 			this.icePlane.material.dynamicFriction -= this.frictionCoefficientDecrease;
-
-			// play audio
-			if(this.isAllowedToSweep)
-			{
-				int rand = Random.Range(0, 3);
-				this.audioManager.StartCoroutine(this.audioManager.PlayRandomHardClip(rand));
-			}
 		}
 	}
+
 
 	private void ResetTurnValues()
 	{
 		this.currentForce = 0.0f;
 	}
+
 
 	private bool CheckHasDecreased()
 	{
@@ -375,6 +371,13 @@ public class GameManagerCurling : MonoBehaviour {
 		return false;
 	}
 
+    // Clamp passed vec3 and update rock position
+    public void UpdateRockPosition(Vector3 _position)
+    {
+        Vector3 pos = new Vector3(Mathf.Clamp(_position.x, -19, 19), 0.75f, Mathf.Clamp(_position.z, -5, 18));
+        this.GetActiveRock().transform.position = pos;
+    }
+
 
 	// Get/Set
 	public GameObject GetActiveRock()
@@ -387,26 +390,15 @@ public class GameManagerCurling : MonoBehaviour {
 		return this.shotPreviewScreen;
 	}
 
-	public bool GetIsAllowedToPosition()
-	{
-		return this.isAllowedToPosition;
-	}
-
-	public bool GetIsAllowedToSweep()
-	{
-		return this.isAllowedToSweep;
-	}
-
-	public void SetIsAllowedToMove(bool value)
-	{
-		this.isAllowedToMove = value;
-	}
-
 	public void SetHasDecreased(bool value)
 	{
 		this.hasDecreased = value;
 	}
 
+    public void SetReadyForShot(bool _isReady)
+    {
+        this.isReadyForShot = _isReady;
+    }
 
 	// Calculate/Convert
 	private float CalculateForce() // Check player & calculate force

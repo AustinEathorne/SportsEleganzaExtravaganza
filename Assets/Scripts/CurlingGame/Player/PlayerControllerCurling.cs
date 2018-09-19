@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControllerCurling : MonoBehaviour {
-
+public class PlayerControllerCurling : MonoBehaviour
+{
 	[SerializeField]
 	private GameManagerCurling gameManager;
 	[SerializeField]
@@ -12,8 +12,10 @@ public class PlayerControllerCurling : MonoBehaviour {
     [SerializeField]
     private LayerMask raycastLayer;
 
-	private bool isWaitingForInput = false;
+    private bool isTouchingRock = false;
 	private bool isMovingRock = false;
+    private bool isSweepingRock = false;
+    private bool isInitialized = false;
 
     private Vector3 lastTargetPosition;
     private Vector3 mouseOffset;
@@ -21,34 +23,28 @@ public class PlayerControllerCurling : MonoBehaviour {
 
 
 
-    private void Update()
-	{
-		if(gameManager.GetIsAllowedToPosition())
-		{
-			// Debug.Log("Can Position");
-            if (Application.isEditor)
-            {
-                if (Input.GetMouseButton(0))
-                {
-                    this.GetRockMovementInputEditor();
-                }
-            }
-            else
-            {
+    #region Main
 
-            }
-		}
+    public IEnumerator PositionRock()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            this.StartCoroutine(this.OnRockTouch());
+        }
+        if (Input.GetMouseButton(0))
+        {
+            this.StartCoroutine(this.OnRockMove());
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            this.StartCoroutine(this.OnRockRelease());
+        }
 
-		if(gameManager.GetIsAllowedToSweep() && this.gameManager.GetActiveRock().GetComponent<CurlingRock>().GetHasPassedReleaseLine())
-		{
-			this.GetSweepInput();
-		}
+        yield return null;
+    }
 
-		this.GetShotPreviewInput();
-	}
-
-    private void GetRockMovementInputEditor()
-	{
+    private IEnumerator OnRockTouch()
+    {
         Ray mouseRay = this.GenerateMouseRay();
         RaycastHit hit;
 
@@ -61,103 +57,105 @@ public class PlayerControllerCurling : MonoBehaviour {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 float rayDistance;
                 this.hitPlane.Raycast(ray, out rayDistance);
-                this.mouseOffset = this.transform.position - ray.GetPoint(rayDistance);
-                this.lastTargetPosition = this.transform.position - ray.GetPoint(rayDistance);
-                
-                Debug.Log("Touching Rock");
-                
-                if (this.hitPlane.Raycast(ray, out rayDistance))
-                {
-                    Vector3 point = ray.GetPoint(rayDistance);
+                this.mouseOffset = this.gameManager.GetActiveRock().transform.position - ray.GetPoint(rayDistance);
 
-                    // Make sure our target destination has moved
-                    if (Vector3.Distance(this.lastTargetPosition, point) > 0.0f)
-                    {
-                        this.gameManager.GetActiveRock().GetComponent<CurlingRock>().MoveRock(new Vector3(point.x, 0.75f, point.z));
-                        Debug.Log("Rock position: " + new Vector3(point.x, 1.0f, point.z).ToString());
-                    }
+                Debug.Log("Touching Rock");
+
+                this.lastTargetPosition = this.gameManager.GetActiveRock().transform.position - ray.GetPoint(rayDistance);
+                this.isTouchingRock = true;
+            }
+            else
+            {
+                Debug.Log("Touching Nothing");
+            }
+        }
+
+        yield return null;
+    }
+    private IEnumerator OnRockMove()
+    {
+        if (this.isTouchingRock || this.isMovingRock)
+        {
+            this.isMovingRock = true;
+
+            this.hitPlane = new Plane(Camera.main.transform.forward * -1, this.gameManager.GetActiveRock().transform.position);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            float rayDistance;
+            if (this.hitPlane.Raycast(ray, out rayDistance))
+            {
+                Vector3 point = ray.GetPoint(rayDistance);
+
+                // Make sure our target destination has moved
+                if (Vector3.Distance(this.gameManager.GetActiveRock().transform.position, point) > 0.0f)
+                {
+                    this.gameManager.UpdateRockPosition(point);
                 }
             }
         }
+
+        yield return null;
+    }
+    private IEnumerator OnRockRelease()
+    {
+        this.isTouchingRock = false;
+        this.isMovingRock = false;
+
+        yield return null;
     }
 
-    private void GetRockMovementInputMobile()
-    {
-        if (Input.GetKey(KeyCode.A))
-        {
-            gameManager.GetActiveRock().GetComponent<CurlingRock>().MoveRock(Vector3.left / 6);
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            gameManager.GetActiveRock().GetComponent<CurlingRock>().MoveRock(Vector3.right / 6);
-        }
-        else if (Input.GetKey(KeyCode.W))
-        {
-            gameManager.GetActiveRock().GetComponent<CurlingRock>().MoveRock(Vector3.forward / 6);
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            gameManager.GetActiveRock().GetComponent<CurlingRock>().MoveRock(Vector3.back / 6);
-        }
-    }
 
-    public IEnumerator GetShotInput()
+    public IEnumerator AddForceToRock(System.Action<bool> _isAddingForce)
     {
-        this.isWaitingForInput = true;
-        Debug.Log("Waiting for key down");
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
-        this.isMovingRock = true;
+        _isAddingForce(true);
 
         // Wait for player to release the space key or if the rock has passed the line
-        while (!Input.GetKeyUp(KeyCode.Space))
+        while (!Input.GetMouseButtonUp(0))
         {
             if (this.gameManager.GetActiveRock().GetComponent<CurlingRock>().GetHasPassedReleaseLine())
             {
-                this.isWaitingForInput = false;
-                this.isMovingRock = false;
                 yield break;
             }
+
             yield return null;
         }
 
-        this.isWaitingForInput = false;
-        this.isMovingRock = false;
-        // Debug.Log("Key released");
+        _isAddingForce(false);
+
+        yield return null;
     }
 
-    private void GetSweepInput()
-	{
-		if(Input.GetKey(KeyCode.Space))
-		{
-			// Debug.Log("Sweep");
-			this.gameManager.DecreaseFrictionCoefficient();
-			this.gameManager.StartCoroutine(this.gameManager.GetActiveRock().GetComponent<CurlingRock>().BroomSweep());
-		}
-	}
+    public void SetIsSweeping(bool _isSweeping)
+    {
+        this.isSweepingRock = _isSweeping;
+    }
+    public IEnumerator SweepRock()
+    {
+        this.isSweepingRock = true;
 
-	private void GetShotPreviewInput()
-	{
-		if(Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1))
-		{
-			this.gameManager.GetRingPreviewScreen().MoveScreen();
-		}
-	}
+        while (this.isSweepingRock)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                this.gameManager.DecreaseFrictionCoefficient();
+                this.gameManager.StartCoroutine(this.gameManager.GetActiveRock().GetComponent<CurlingRock>().BroomSweep());
 
+                this.audioManager.StartCoroutine(this.audioManager.PlayRandomHardClip(Random.Range(0, 3)));
+            }
 
-	// Get/Set
-	public bool GetIsMovingRock()
-	{
-		return this.isMovingRock;
-	}
+            yield return null;
+        }
 
-	public bool GetIsWaitingForInput()
-	{
-		return this.isWaitingForInput;
-	}
+        
 
+        yield return null;
+    }
 
-    // Raycast
+    #endregion
+
+    #region RayCasts
+
     private Ray GenerateMouseRay()
     {
         Vector3 mousePositionFar = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.farClipPlane);
@@ -179,4 +177,6 @@ public class PlayerControllerCurling : MonoBehaviour {
 
         return new Ray(worldPosNear, worldPosFar - worldPosNear);
     }
+
+    #endregion
 }
