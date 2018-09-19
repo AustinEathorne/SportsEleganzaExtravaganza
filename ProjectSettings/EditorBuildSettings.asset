@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DingerTime.unity
     guid: 8c02182b79c3fe948a859d438a875176
+  - enabled: 1
+    path: Assets/Scenes/CurlingGame.unity
+    guid: a49548bf9167fe94285280eafa7cc324
   m_configObjects: {}

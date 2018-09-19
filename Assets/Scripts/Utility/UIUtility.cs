@@ -657,12 +657,15 @@ public class UIUtility : MonoSingleton<UIUtility>
             _targetColour = _preserveAlpha ? new Color(_targetColour.r, _targetColour.g, _targetColour.b, _image.color.a) :
                 new Color(_targetColour.r, _targetColour.g, _targetColour.b, _targetColour.a);
 
-            _image.color = Color.Lerp(startCol, _targetColour, elapsedTime / _shiftTime);
+            if(_image)
+                _image.color = Color.Lerp(startCol, _targetColour, elapsedTime / _shiftTime);
+
 			elapsedTime += Time.deltaTime;
 			yield return null;
 		}
 
-        _image.color = _targetColour;
+        if (_image)
+            _image.color = _targetColour;
         yield return null;
 	}
 
