@@ -191,6 +191,9 @@ public class GameManagerCurling : MonoBehaviour {
 		// Add to the active list
 		this.activeRockList.Add(obj);
 
+        // Update help text
+        this.canvasManager.EnableHelpText(0);
+
         // Wait for confirmation of stats (mass & acceleration) + rock positioning
         while (this.isReadyForShot != true)
         {
@@ -209,12 +212,18 @@ public class GameManagerCurling : MonoBehaviour {
 		// Calculate force
 		this.currentForce = this.CalculateForce();
 
+        // Update help text
+        this.canvasManager.EnableHelpText(1);
+
         // Start getting input and wait until is has been released - Force is applied in fixed update
         yield return this.playerController.StartCoroutine(this.playerController.AddForceToRock( _isAddingForce => {
             if (_isAddingForce)
                 this.isAddingForceToRock = true;
         }));
         this.isAddingForceToRock = false;
+
+        // Update help text
+        this.canvasManager.EnableHelpText(2);
 
         // Play shot audio
         this.audioManager.StartCoroutine(this.audioManager.PlayGlideSfx());
@@ -271,6 +280,8 @@ public class GameManagerCurling : MonoBehaviour {
 			}
 			yield return null;
 		}
+
+        this.canvasManager.DisableAllHelpText();
 
 		// Reset
 		this.ResetFrictionCoEfficient();

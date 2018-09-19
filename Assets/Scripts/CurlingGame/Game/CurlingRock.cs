@@ -83,12 +83,6 @@ public class CurlingRock : MonoBehaviour
 
 		// Debug.Log("Vel: " + this.GetComponent<Rigidbody>().velocity.z.ToString());
 	}
-
-	// Positioning movement
-	public void MoveRock(Vector3 direction)
-	{
-		this.transform.position += direction;
-	}
 		
 
 	// Enter - Add int value to list
@@ -131,30 +125,25 @@ public class CurlingRock : MonoBehaviour
 		}
 	}
 
-	private int CheckMostInnerRing()
-	{
-		int lowest = 4; // outer most ring id
-
-		// traverse ring id list
-		for(int i = 0; i < this.ringIdList.Count; i++)
-		{
-			// check if ring id is the lower than the current (center ring is 0)
-			if(this.ringIdList[i] < lowest)
-			{
-				lowest = this.ringIdList[i];
-			}
-		}
-
-		return lowest;
-	}
-
 
 
 	// Get/Set
 	public int GetCurrentRingId()
 	{
-		return this.CheckMostInnerRing();
-	}
+        int lowest = 4; // outer most ring id
+
+        // traverse ring id list
+        for (int i = 0; i < this.ringIdList.Count; i++)
+        {
+            // check if ring id is the lower than the current (center ring is 0)
+            if (this.ringIdList[i] < lowest)
+            {
+                lowest = this.ringIdList[i];
+            }
+        }
+
+        return lowest;
+    }
 
 	public bool GetHasPassedReleaseLine()
 	{

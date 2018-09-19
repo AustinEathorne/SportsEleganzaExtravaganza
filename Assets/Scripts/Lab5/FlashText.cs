@@ -3,13 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FlashText : MonoBehaviour {
+public class FlashText : MonoBehaviour
+{
+    [SerializeField]
+    private bool playOnEnable = false;
 
-	[SerializeField]
+    [SerializeField]
 	private float flashSpeed = 5.0f;
 
 	[SerializeField]
 	private List<Text> textList = new List<Text>();
+
+    
+
+    public void OnEnable()
+    {
+        if (this.playOnEnable)
+        {
+            this.StartCoroutine(this.Flash());
+        }
+    }
 
 	public IEnumerator Flash()
 	{

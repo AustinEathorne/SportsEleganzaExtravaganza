@@ -41,7 +41,11 @@ public class CanvasManagerCurling : MonoBehaviour {
 	[SerializeField]
 	private Text winnerTextShadow;
 
-	private float massValue = 0.0f;
+    [Header("Help Text")]
+    [SerializeField]
+    private List<GameObject> helpTextContainers;
+
+    private float massValue = 0.0f;
 	private float accelerationValue = 0.0f;
 
 	// Called from GameManager
@@ -111,6 +115,28 @@ public class CanvasManagerCurling : MonoBehaviour {
 		this.playerTurnText.text = value;
 		this.playerTurnTextShadow.text = value;
 	}
+
+    // Enable/Disable help text containers
+    public void EnableHelpText(int _index)
+    {
+        // Disable previous help text
+        if ((_index - 1) < 0)
+            this.helpTextContainers[this.helpTextContainers.Count - 1].SetActive(false);
+        else
+            this.helpTextContainers[_index - 1].SetActive(false);
+
+        // Enable current help text
+        this.helpTextContainers[_index].SetActive(true);
+        
+    }
+
+    public void DisableAllHelpText()
+    {
+        foreach (GameObject go in this.helpTextContainers)
+        {
+            go.SetActive(false);
+        }
+    }
 
 	// Get/Set Current Values
 	public void SetMassValue() // Set on slider value changed
