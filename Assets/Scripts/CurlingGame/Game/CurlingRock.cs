@@ -87,7 +87,6 @@ public class CurlingRock : MonoBehaviour
 
 	// Enter - Add int value to list
 	// Exit  - Remove int value from list
-	// Check - find lowest value in the list
 	public void OnTriggerEnter(Collider col)
 	{
 		if(col.transform.GetComponent<PointRing>())
@@ -124,7 +123,6 @@ public class CurlingRock : MonoBehaviour
 			GameObject.FindObjectOfType<GameManagerCurling>().SetHasDecreased(true); // shouldve made another function/ renamed this..
 		}
 	}
-
 
 
 	// Get/Set
