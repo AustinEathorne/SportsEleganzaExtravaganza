@@ -13,7 +13,7 @@ public class PlayerControllerDingerTime : MonoBehaviour
 
     public IEnumerator Start()
     {
-        if (Application.isEditor)
+        if (!Application.isMobilePlatform)
         {
             this.StartCoroutine(this.RunEditor());
         }

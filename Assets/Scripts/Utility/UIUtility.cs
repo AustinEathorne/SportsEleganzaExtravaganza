@@ -744,12 +744,16 @@ public class UIUtility : MonoSingleton<UIUtility>
         while (elapsedTime < _fadeTime)
         {
             currentAlpha = Mathf.Lerp(startAlpha, _targetAlpha, (elapsedTime / _fadeTime));
-            _group.alpha = currentAlpha;
+
+            if(_group)
+                _group.alpha = currentAlpha;
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        _group.alpha = _targetAlpha;
+        if (_group)
+            _group.alpha = _targetAlpha;
+
         yield return null;
     }
 

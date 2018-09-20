@@ -27,7 +27,7 @@ public class PlayerControllerCurling : MonoBehaviour
 
     public IEnumerator PositionRock()
     {
-        if (Application.isEditor)
+        if (!Application.isMobilePlatform)
         {
             if (Input.GetMouseButtonDown(0))
                 this.StartCoroutine(this.OnRockTouch());
@@ -55,7 +55,7 @@ public class PlayerControllerCurling : MonoBehaviour
 
     private IEnumerator OnRockTouch()
     {
-        Ray inputRay = Application.isEditor ? this.GenerateMouseRay() : this.GenerateTouchRay();
+        Ray inputRay = Application.isMobilePlatform ? this.GenerateTouchRay() : this.GenerateMouseRay();
         RaycastHit hit;
 
         if (Physics.Raycast(inputRay.origin, inputRay.direction, out hit, Mathf.Infinity, this.raycastLayer))
@@ -64,8 +64,9 @@ public class PlayerControllerCurling : MonoBehaviour
             {
                 this.hitPlane = new Plane(Camera.main.transform.forward * -1, this.gameManager.GetActiveRock().transform.position);
 
-                Ray ray = Application.isEditor ? Camera.main.ScreenPointToRay(Input.mousePosition) :
-                    Camera.main.ScreenPointToRay(Input.touches[0].position);
+                Ray ray = Application.isMobilePlatform ? Camera.main.ScreenPointToRay(Input.GetTouch(0).position) : 
+                    Camera.main.ScreenPointToRay(Input.mousePosition)
+                    ;
                 float rayDistance;
                 this.hitPlane.Raycast(ray, out rayDistance);
                 this.mouseOffset = this.gameManager.GetActiveRock().transform.position - ray.GetPoint(rayDistance);
@@ -90,8 +91,9 @@ public class PlayerControllerCurling : MonoBehaviour
             this.isMovingRock = true;
 
             this.hitPlane = new Plane(Camera.main.transform.forward * -1, this.gameManager.GetActiveRock().transform.position);
-            Ray ray = Application.isEditor ? Camera.main.ScreenPointToRay(Input.mousePosition) :
-                Camera.main.ScreenPointToRay(Input.touches[0].position);
+            Ray ray = Application.isMobilePlatform ? Camera.main.ScreenPointToRay(Input.touches[0].position) :
+                Camera.main.ScreenPointToRay(Input.mousePosition);
+
             float rayDistance;
             if (this.hitPlane.Raycast(ray, out rayDistance))
             {
@@ -118,7 +120,7 @@ public class PlayerControllerCurling : MonoBehaviour
 
     public IEnumerator AddForceToRock(System.Action<bool> _isAddingForce)
     {
-        if (Application.isEditor)
+        if (!Application.isMobilePlatform)
         {
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
 
@@ -166,7 +168,7 @@ public class PlayerControllerCurling : MonoBehaviour
     {
         this.isSweepingRock = true;
 
-        if (Application.isEditor)
+        if (!Application.isMobilePlatform)
         {
             while (this.isSweepingRock)
             {
