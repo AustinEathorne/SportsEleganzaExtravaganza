@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: AustinEathorne
   productName: SportsEleganzaExtravaganza
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -153,7 +153,7 @@ PlayerSettings:
     Android: com.ALE.SEE
   buildNumber: {}
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 24
+  AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   aotOptions: 
